@@ -1,19 +1,35 @@
 import GalleryShowcase from './GalleryShowcase'
+import InquiryForm from './InquiryForm'
 import MotionObserver from './MotionObserver'
+import PublicProperties from './PublicProperties'
+import LocationImageSlider from './LocationImageSlider'
 
 const gallery = [
-  { src: '/photos/fini-living-01.jpg', label: 'Living Area', className: 'gallery-landscape' },
-  { src: '/photos/fini-kitchen.jpg', label: 'Kitchen', className: 'gallery-portrait' },
-  { src: '/photos/fini-bedroom.jpg', label: 'Bedroom', className: 'gallery-portrait' },
-  { src: '/photos/fini-dining.jpg', label: 'Dining Area', className: 'gallery-landscape' },
-  { src: '/photos/fini-living-02.jpg', label: 'Lounge', className: 'gallery-landscape' },
-  { src: '/photos/fini-bathroom-02.jpg', label: 'Bathroom', className: 'gallery-portrait' },
+  { src: '/photos/unit-1/living-room-02.jpg', label: 'Fini Homes · Living Area', className: 'gallery-landscape' },
+  { src: '/photos/unit-1/kitchen.jpg', label: 'Fini Homes · Kitchen', className: 'gallery-portrait' },
+  { src: '/photos/chateau/main-gate.jpg', label: 'Chateau Valenzuela · Main Gate', className: 'gallery-landscape' },
+  { src: '/photos/chateau/pool.jpg', label: 'Chateau Valenzuela · Swimming Pool', className: 'gallery-landscape' },
+  { src: '/photos/unit-1/bedroom-bunk.jpg', label: 'Fini Homes · Bedroom', className: 'gallery-portrait' },
+  { src: '/photos/chateau/basketball-court.jpg', label: 'Chateau Valenzuela · Basketball Court', className: 'gallery-landscape' },
 ]
-
-const accountRows = [
-  { due: 'Sep 15, 2026', water: '₱420', elec: '₱1,185', hoa: '₱600', total: '₱10,705', paid: '₱10,705', balance: '₱0' },
-  { due: 'Oct 15, 2026', water: '—', elec: '—', hoa: '₱600', total: 'Pending', paid: '—', balance: '—' },
-]
+const locationShowcase = {
+  fini: [
+    { src: '/photos/fini-building.jpg', label: 'Fini Homes Exterior', alt: 'Fini Homes Condominium exterior' },
+    { src: '/photos/fini-dining.jpg', label: 'Dining Area', alt: 'Fini Homes dining area' },
+    { src: '/photos/fini-living-02.jpg', label: 'Living Area', alt: 'Fini Homes living area' },
+    { src: '/photos/fini-kitchen.jpg', label: 'Kitchen', alt: 'Fini Homes kitchen area' },
+    { src: '/photos/fini-bedroom.jpg', label: 'Bedroom', alt: 'Fini Homes bedroom' },
+    { src: '/photos/fini-bathroom-01.jpg', label: 'Bathroom', alt: 'Fini Homes bathroom' },
+  ],
+  chateau: [
+    { src: '/photos/chateau/main-gate.jpg', label: 'Main Gate', alt: 'Chateau Valenzuela main gate' },
+    { src: '/photos/chateau/buildings.jpg', label: 'Buildings', alt: 'Chateau Valenzuela buildings' },
+    { src: '/photos/chateau/clubhouse.jpg', label: 'Clubhouse', alt: 'Chateau Valenzuela clubhouse' },
+    { src: '/photos/chateau/pool.jpg', label: 'Swimming Pool', alt: 'Chateau Valenzuela swimming pool' },
+    { src: '/photos/chateau/basketball-court.jpg', label: 'Basketball Court', alt: 'Chateau Valenzuela basketball court' },
+    { src: '/photos/chateau/park.jpg', label: 'Park & Landscaped Area', alt: 'Chateau Valenzuela pool and landscaped area' },
+  ],
+}
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>
@@ -33,6 +49,7 @@ export default function Home() {
   return (
     <main>
       <MotionObserver />
+
       <header className="site-header">
         <div className="header-inner">
           <a className="brand" href="#home" aria-label="J3C Rental Properties home">
@@ -44,22 +61,24 @@ export default function Home() {
           </a>
 
           <nav className="desktop-nav" aria-label="Primary navigation">
-            <a href="#residence">Property</a>
+            <a href="#properties">Available Units</a>
+            <a href="#locations">Locations</a>
             <a href="#gallery">Gallery</a>
-            <a href="#services">Services</a>
-            <a href="#tenant">Tenant Portal</a>
+            <a href="#guidelines">FAQs & Guidelines</a>
+            <a href="#contact">Contact</a>
           </nav>
 
-          <a className="btn btn-navy desktop-cta" href="#contact">Schedule a Viewing</a>
+          <a className="btn btn-navy desktop-cta" href="#contact">Inquire Now</a>
 
           <details className="mobile-menu">
             <summary aria-label="Open menu">Menu</summary>
             <div className="mobile-menu-panel">
-              <a href="#residence">Property</a>
+              <a href="#properties">Available Units</a>
+              <a href="#locations">Locations</a>
               <a href="#gallery">Gallery</a>
-              <a href="#services">Services</a>
-              <a href="#tenant">Tenant Portal</a>
-              <a className="btn btn-gold" href="#contact">Schedule a Viewing</a>
+              <a href="#guidelines">FAQs & Guidelines</a>
+              <a href="#contact">Contact</a>
+              <a className="btn btn-gold" href="#contact">Inquire Now</a>
             </div>
           </details>
         </div>
@@ -73,79 +92,96 @@ export default function Home() {
         <div className="hero-container">
           <div className="hero-copy" data-reveal>
             <p className="eyebrow eyebrow-light"><span /> J3C · VALENZUELA CITY</p>
-            <h1>Comfortable living,<br /><em>professionally managed.</em></h1>
-            <p className="hero-lead">Discover a more polished rental experience at Fini Homes Condominium—presented with actual property photos and supported by J3C from inquiry to tenancy.</p>
+            <h1>Find a space that<br /><em>feels like home.</em></h1>
+            <p className="hero-lead">Explore J3C rental properties through real property photos, clear rental information, and a direct inquiry experience designed to make finding your next home simpler.</p>
             <div className="hero-actions">
-              <a className="btn btn-gold" href="#residence">Explore the Property <Arrow /></a>
-              <a className="btn btn-glass" href="#gallery">View Photo Gallery</a>
+              <a className="btn btn-gold" href="#properties">Browse Available Units <Arrow /></a>
+              <a className="btn btn-glass" href="#contact">Inquire Now</a>
             </div>
           </div>
 
           <aside className="hero-property-card" data-reveal style={{ '--reveal-delay': '120ms' }}>
-            <div className="hero-card-topline"><span>Featured Rental</span><b>01</b></div>
-            <h2>Fini Homes<br />Condominium</h2>
-            <p>Marulas, Valenzuela</p>
+            <div className="hero-card-topline"><span>J3C Rental Collection</span><b>Live</b></div>
+            <h2>Available homes<br />in one place.</h2>
+            <p>Owner-managed rental listings</p>
             <div className="hero-card-divider" />
             <div className="hero-card-facts">
-              <div><span>Property Type</span><strong>Condominium</strong></div>
-              <div><span>Availability</span><strong>By Inquiry</strong></div>
-              <div><span>Viewing</span><strong>By Schedule</strong></div>
+              <div><span>Listings</span><strong>Updated by J3C</strong></div>
+              <div><span>Locations</span><strong>Multiple properties</strong></div>
+              <div><span>Inquiries</span><strong>Direct to J3C</strong></div>
             </div>
-            <a href="#contact" className="hero-card-link">Ask about this unit <Arrow /></a>
+            <a href="#properties" className="hero-card-link">Browse available units <Arrow /></a>
           </aside>
         </div>
 
         <div className="hero-bottom">
           <div className="hero-bottom-inner">
             <span>Actual J3C property photos</span>
-            <span>Fini Homes · Marulas, Valenzuela</span>
-            <span>Tenant support ready</span>
+            <span>Fini Homes · Chateau Valenzuela</span>
+            <span>Direct rental inquiries</span>
           </div>
         </div>
       </section>
 
-      <section className="trust-strip" aria-label="J3C rental services">
+      <section className="trust-strip" aria-label="J3C rental information">
         <div className="section-container trust-inner">
-          <p>More than a listing. A better rental experience.</p>
+          <p>Everything renters need, presented with clarity.</p>
           <div className="trust-points">
-            <span>Property Presentation</span><i />
-            <span>Viewing Assistance</span><i />
-            <span>Tenant Support</span>
+            <span>Property Details</span><i />
+            <span>Rental Guidelines</span><i />
+            <span>Direct Inquiry</span>
           </div>
         </div>
       </section>
 
-      <section className="residence section-pad" id="residence">
-        <div className="section-container residence-grid">
-          <div className="residence-copy" data-reveal>
-            <p className="eyebrow"><span /> FEATURED RESIDENCE</p>
-            <h2>Fini Homes,<br /><em>Marulas.</em></h2>
-            <p className="lead">A real J3C-managed condominium presented using the property’s actual photos. This mockup keeps the experience credible while leaving rates, exact unit specifications, and live availability for J3C to confirm.</p>
-
-            <div className="property-facts">
-              <div><span>Residence</span><strong>Fini Homes Condominium</strong></div>
-              <div><span>Location</span><strong>Marulas, Valenzuela</strong></div>
-              <div><span>Rental Status</span><strong>Inquire for availability</strong></div>
-              <div><span>Property Viewing</span><strong>By appointment</strong></div>
+      <section className="property-browser section-pad" id="properties">
+        <div className="section-container">
+          <div className="property-browser-heading" data-reveal>
+            <div>
+              <p className="eyebrow"><span /> AVAILABLE RENTALS</p>
+              <h2>Find the unit that<br /><em>fits your next move.</em></h2>
             </div>
+            <div className="property-browser-intro">
+              <span>LIVE OWNER-MANAGED LISTINGS</span>
+              <p>Units added or updated from the J3C owner dashboard appear here automatically. Rentals are grouped by property so visitors can compare units, availability, rates, and photos without a cluttered layout.</p>
+            </div>
+          </div>
+          <PublicProperties />
+        </div>
+      </section>
 
-            <a className="inline-cta" href="#contact"><span>Request current rental details</span><Arrow /></a>
+      <section className="location-showcase section-pad" id="locations">
+        <div className="section-container">
+          <div className="section-heading location-showcase-heading" data-reveal>
+            <div>
+              <p className="eyebrow"><span /> J3C LOCATIONS</p>
+              <h2>Two communities,<br /><em>one clear rental experience.</em></h2>
+            </div>
+            <p>Explore the neighborhoods where J3C currently manages rental units. Individual unit information stays in the live listings above, while shared community details are presented here once for a cleaner browsing experience.</p>
           </div>
 
-          <div className="property-collage" data-reveal style={{ '--reveal-delay': '120ms' }}>
-            <figure className="collage-main">
-              <img src="/photos/fini-living-01.jpg" alt="Living area at Fini Homes Condominium" />
-              <figcaption>Living Area</figcaption>
-            </figure>
-            <figure className="collage-top">
-              <img src="/photos/fini-bedroom.jpg" alt="Bedroom at Fini Homes Condominium" />
-              <figcaption>Bedroom</figcaption>
-            </figure>
-            <figure className="collage-bottom">
-              <img src="/photos/fini-kitchen.jpg" alt="Kitchen at Fini Homes Condominium" />
-              <figcaption>Kitchen</figcaption>
-            </figure>
-            <div className="photo-badge"><strong>100%</strong><span>Actual property photos</span></div>
+          <div className="location-showcase-grid">
+            <article className="location-property-card" data-reveal>
+              <div className="location-property-media"><LocationImageSlider images={locationShowcase.fini} title="Fini Homes Condominium photos" /></div>
+              <div className="location-property-copy">
+                <span>MARULAS · VALENZUELA CITY</span>
+                <h3>Fini Homes Condominium</h3>
+                <p>80 Ramon Delfin Street, Barangay Marulas, Valenzuela City, 1440 Metro Manila</p>
+                <div className="location-tags"><b>24-hr security</b><b>Swimming pool</b><b>Clubhouse</b><b>Near OLFU</b></div>
+                <a href="https://maps.app.goo.gl/brh4UNvehwBPC4qc9" target="_blank" rel="noreferrer">Open location <Arrow /></a>
+              </div>
+            </article>
+
+            <article className="location-property-card location-property-card-chateau" data-reveal style={{ '--reveal-delay': '100ms' }}>
+              <div className="location-property-media"><LocationImageSlider images={locationShowcase.chateau} title="Chateau Valenzuela photos" /></div>
+              <div className="location-property-copy">
+                <span>LINGUNAN · VALENZUELA CITY</span>
+                <h3>Chateau Valenzuela</h3>
+                <p>16 P. Gregorio Street, Brgy. Lingunan, Valenzuela City, 1446 Metro Manila</p>
+                <div className="location-tags"><b>5 J3C units</b><b>Pool</b><b>Basketball court</b><b>24-hr security</b></div>
+                <a href="#properties">View Chateau units <Arrow /></a>
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -154,10 +190,10 @@ export default function Home() {
         <div className="section-container">
           <div className="section-heading">
             <div>
-              <p className="eyebrow"><span /> PHOTO TOUR</p>
-              <h2>See the space<br /><em>before you visit.</em></h2>
+              <p className="eyebrow"><span /> PROPERTY & COMMUNITY PHOTOS</p>
+              <h2>See the spaces<br /><em>and surroundings.</em></h2>
             </div>
-            <p>Real property imagery gives prospective renters a clearer sense of the unit and makes the website feel trustworthy from the first visit.</p>
+            <p>Actual J3C property and community photos are used throughout the website. Unit-specific photos remain attached to each listing, while shared amenity photos are shown at the property level.</p>
           </div>
 
           <GalleryShowcase items={gallery} />
@@ -166,93 +202,93 @@ export default function Home() {
 
       <section className="brand-story" id="services">
         <div className="brand-story-image" data-reveal>
-          <img src="/photos/fini-gate.jpg" alt="Fini Homes entrance" />
+          <img src="/photos/chateau/buildings.jpg" alt="Chateau Valenzuela community buildings" />
           <div className="brand-story-overlay" />
-          <div className="brand-story-caption"><span>Fini Homes</span><strong>Marulas, Valenzuela</strong></div>
+          <div className="brand-story-caption"><span>J3C Rental Properties</span><strong>Valenzuela City</strong></div>
         </div>
 
         <div className="brand-story-copy" data-reveal style={{ '--reveal-delay': '100ms' }}>
           <div className="story-logo"><Logo /></div>
           <p className="eyebrow eyebrow-light"><span /> THE J3C EXPERIENCE</p>
-          <h2>Rental support with<br /><em>care and clarity.</em></h2>
-          <p>J3C can be positioned as more than a property listing page: a professional rental partner that helps tenants discover a unit, arrange a viewing, understand charges, and stay on top of their account.</p>
+          <h2>Rental information,<br /><em>made easier.</em></h2>
+          <p>Visitors can browse current and upcoming units, review real property photos, see rates and basic terms, then contact J3C directly for the next step.</p>
 
           <div className="services-list">
-            <div><b>01</b><span><strong>Property Discovery</strong><small>Professional galleries and clear property information.</small></span></div>
-            <div><b>02</b><span><strong>Viewing Coordination</strong><small>A direct path from inquiry to scheduled viewing.</small></span></div>
-            <div><b>03</b><span><strong>Tenant Account Support</strong><small>Ready to expand into statements, balances, and payment records.</small></span></div>
+            <div><b>01</b><span><strong>Browse by Property</strong><small>Units are grouped by development so multiple J3C rentals stay organized.</small></span></div>
+            <div><b>02</b><span><strong>Review Unit Details</strong><small>Rates, availability, furnishing, photos, and important rental information.</small></span></div>
+            <div><b>03</b><span><strong>Inquire Directly</strong><small>Contact J3C through the website inquiry form or preferred messaging channel.</small></span></div>
           </div>
         </div>
       </section>
 
-      <section className="tenant section-pad" id="tenant">
-        <div className="section-container tenant-grid">
-          <div className="tenant-copy" data-reveal>
-            <p className="eyebrow"><span /> TENANT PORTAL CONCEPT</p>
-            <h2>Rent and account details,<br /><em>all in one place.</em></h2>
-            <p>Based on J3C’s existing Statement of Account workflow, the website can later grow into a secure tenant portal for monthly rent, utilities, HOA dues, payments, and balances.</p>
-            <div className="feature-pills">
-              <span>Monthly Statement</span>
-              <span>Utility Breakdown</span>
-              <span>Payment History</span>
-              <span>Mobile Friendly</span>
+      <section className="info-hub section-pad" id="guidelines">
+        <div className="section-container">
+          <div className="info-hub-heading" data-reveal>
+            <div>
+              <p className="eyebrow"><span /> RENTAL INFORMATION HUB</p>
+              <h2>Know what to expect<br /><em>before you inquire.</em></h2>
             </div>
+            <p>This section replaces the tenant portal and will contain J3C&apos;s official FAQs, rental guidelines, requirements, rates and terms, plus location details. Draft placeholders are shown until final content is provided.</p>
           </div>
 
-          <div className="portal-shell" data-reveal style={{ '--reveal-delay': '120ms' }}>
-            <div className="portal-top">
-              <div className="portal-brand">
-                <div className="portal-logo"><Logo compact /></div>
-                <div><strong>J3C Tenant Portal</strong><span>Statement of Account</span></div>
+          <div className="info-hub-grid">
+            <article className="info-card info-card-faq" data-reveal>
+              <div className="info-card-number">01</div>
+              <div className="info-card-kicker">Frequently Asked Questions</div>
+              <h3>Quick answers for renters.</h3>
+              <div className="faq-list">
+                <details open>
+                  <summary>How do I check if a unit is available?</summary>
+                  <p>Availability may change. Use the inquiry section to contact J3C for the latest unit status.</p>
+                </details>
+                <details>
+                  <summary>Where can I ask about rental rates?</summary>
+                  <p>Current rates and payment terms will be confirmed by J3C through the website or direct inquiry channels.</p>
+                </details>
+                <details>
+                  <summary>Can I ask to view the property?</summary>
+                  <p>Yes. Send an inquiry and J3C can provide the next steps based on the property&apos;s availability.</p>
+                </details>
               </div>
-              <span className="sample-pill">DEMO PREVIEW</span>
-            </div>
+            </article>
 
-            <div className="portal-title">
-              <div><span>Tenant</span><strong>Sample Tenant</strong></div>
-              <div><span>Billing period</span><strong>September 2026</strong></div>
-            </div>
+            <article className="info-card" data-reveal style={{ '--reveal-delay': '80ms' }}>
+              <div className="info-card-number">02</div>
+              <div className="info-card-kicker">Guidelines & Requirements</div>
+              <h3>Everything needed before renting.</h3>
+              <ul className="info-checklist">
+                <li><span>Rental requirements</span><small>Official document checklist to be supplied by J3C.</small></li>
+                <li><span>Rental guidelines</span><small>Property rules, occupancy guidance, and renter responsibilities.</small></li>
+                <li><span>Move-in information</span><small>Process and required steps will be added once confirmed.</small></li>
+              </ul>
+              <div className="draft-chip">Content for client confirmation</div>
+            </article>
 
-            <div className="portal-stats">
-              <div><span>Unit</span><strong>204</strong></div>
-              <div><span>Base Rent</span><strong>₱8,500.00</strong></div>
-              <div className="balance-stat"><span>Current Balance</span><strong>₱0.00</strong></div>
-            </div>
+            <article className="info-card info-card-accent" data-reveal style={{ '--reveal-delay': '160ms' }}>
+              <div className="info-card-number">03</div>
+              <div className="info-card-kicker">Rates & Terms / Pricing</div>
+              <h3>Clear costs. Clear expectations.</h3>
+              <div className="rate-preview">
+                <span>Current rental rate</span>
+                <strong>Available upon inquiry</strong>
+                <small>Final monthly rates, deposits, advance payments, lease terms, and applicable fees will be published after J3C confirmation.</small>
+              </div>
+              <a href="#contact" className="info-card-link">Ask about current rates <Arrow /></a>
+            </article>
 
-            <div className="portal-table-wrap">
-              <table className="portal-table">
-                <thead><tr><th>Due Date</th><th>Water</th><th>Elec</th><th>HOA</th><th>Total Due</th><th>Paid</th><th>Balance</th></tr></thead>
-                <tbody>
-                  {accountRows.map((row, index) => (
-                    <tr key={index}><td>{row.due}</td><td>{row.water}</td><td>{row.elec}</td><td>{row.hoa}</td><td>{row.total}</td><td>{row.paid}</td><td>{row.balance}</td></tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="portal-mobile-ledger" aria-label="Mobile account statement preview">
-              {accountRows.map((row, index) => (
-                <article className="ledger-card" key={`mobile-${index}`}>
-                  <div className="ledger-card-head">
-                    <div><span>Due date</span><strong>{row.due}</strong></div>
-                    <span className={row.balance === '₱0' ? 'ledger-status paid' : 'ledger-status'}>{row.balance === '₱0' ? 'Paid' : 'Upcoming'}</span>
-                  </div>
-                  <div className="ledger-total">
-                    <span>Total due</span>
-                    <strong>{row.total}</strong>
-                  </div>
-                  <div className="ledger-grid">
-                    <div><span>Water</span><strong>{row.water}</strong></div>
-                    <div><span>Electricity</span><strong>{row.elec}</strong></div>
-                    <div><span>HOA</span><strong>{row.hoa}</strong></div>
-                    <div><span>Amount paid</span><strong>{row.paid}</strong></div>
-                  </div>
-                  <div className="ledger-balance"><span>Balance</span><strong>{row.balance}</strong></div>
-                </article>
-              ))}
-            </div>
-
-            <p className="portal-note">Concept only · Fictional tenant information · No live account connection</p>
+            <article className="info-card info-card-location" data-reveal style={{ '--reveal-delay': '240ms' }}>
+              <div className="info-card-number">04</div>
+              <div className="info-card-kicker">Location / How to Get There</div>
+              <h3>J3C Locations</h3>
+              <p className="location-copy">Fini Homes · Marulas & Chateau Valenzuela · Lingunan</p>
+              <div className="location-visual" aria-hidden="true">
+                <span className="map-road map-road-a" />
+                <span className="map-road map-road-b" />
+                <span className="map-road map-road-c" />
+                <span className="map-pin">J3C</span>
+              </div>
+              <a className="info-card-link" href="#locations">View property locations <Arrow /></a>
+            </article>
           </div>
         </div>
       </section>
@@ -262,26 +298,42 @@ export default function Home() {
           <img src="/photos/fini-building.jpg" alt="Fini Homes Condominium exterior" />
           <div className="contact-overlay" />
           <div className="contact-message" data-reveal>
-            <p>PRIVATE VIEWING</p>
-            <h2>Your next home<br /><em>starts with a visit.</em></h2>
+            <p>GET IN TOUCH</p>
+            <h2>Questions about<br /><em>a property?</em></h2>
+            <span className="contact-message-sub">J3C is one message away.</span>
           </div>
         </div>
 
         <div className="contact-panel" data-reveal>
-          <p className="eyebrow eyebrow-light"><span /> RENTAL INQUIRY</p>
-          <h2>Schedule a<br />property viewing.</h2>
-          <p>Send your details so J3C can confirm the latest availability, rental requirements, and viewing schedule.</p>
+          <p className="eyebrow eyebrow-light"><span /> INQUIRE NOW / CONTACT US</p>
+          <h2>Start with<br />a simple inquiry.</h2>
+          <p>Choose your preferred contact channel or leave your name, number, and question through the inquiry form below.</p>
 
-          <form className="inquiry-form">
-            <div className="field-row">
-              <label>Full name<input placeholder="Your name" /></label>
-              <label>Contact number<input placeholder="09XX XXX XXXX" /></label>
-            </div>
-            <label>Email address<input type="email" placeholder="you@email.com" /></label>
-            <label>Interested property<select defaultValue="Fini Homes Condominium"><option>Fini Homes Condominium</option><option>Other J3C property</option></select></label>
-            <label>Message<textarea rows="4" placeholder="I would like to ask about availability and schedule a viewing." /></label>
-            <button className="btn btn-gold btn-full" type="button">Send Rental Inquiry <Arrow /></button>
-          </form>
+          <div className="contact-channels" aria-label="Direct contact options">
+            <a href="#inquiry-form" className="contact-channel channel-viber" aria-label="Contact J3C through Viber">
+              <span className="channel-brand-icon" aria-hidden="true">
+                <img src="https://cdn.simpleicons.org/viber/7360F2" alt="" />
+              </span>
+              <span><strong>Viber</strong><small>Official account to be connected</small></span>
+              <Arrow />
+            </a>
+            <a href="#inquiry-form" className="contact-channel channel-whatsapp" aria-label="Contact J3C through WhatsApp">
+              <span className="channel-brand-icon" aria-hidden="true">
+                <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="" />
+              </span>
+              <span><strong>WhatsApp</strong><small>Official number to be connected</small></span>
+              <Arrow />
+            </a>
+            <a href="#inquiry-form" className="contact-channel channel-messenger" aria-label="Contact J3C through Messenger">
+              <span className="channel-brand-icon" aria-hidden="true">
+                <img src="https://cdn.simpleicons.org/messenger/00B2FF" alt="" />
+              </span>
+              <span><strong>Messenger</strong><small>Official page to be connected</small></span>
+              <Arrow />
+            </a>
+          </div>
+
+          <InquiryForm />
 
           <div className="office-line">
             <span>Management Office</span>
@@ -296,8 +348,8 @@ export default function Home() {
             <div className="logo-shell"><Logo compact /></div>
             <span className="brand-copy"><strong>J3C Rental Properties</strong><small>Condominium Unit Rental</small></span>
           </a>
-          <p>Website concept using J3C branding and supplied property photos.</p>
-          <div className="footer-links"><a href="#residence">Property</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div>
+          <p>J3C Rental Properties · Valenzuela City</p>
+          <div className="footer-links"><a href="#properties">Available Units</a><a href="#guidelines">FAQs & Guidelines</a><a href="#contact">Contact</a></div>
         </div>
       </footer>
     </main>

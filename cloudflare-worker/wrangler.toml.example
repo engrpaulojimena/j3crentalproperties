@@ -1,0 +1,12 @@
+name = "j3c-rental-api"
+main = "src/index.js"
+compatibility_date = "2026-09-10"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "j3c-rental-db"
+database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
+
+# Do NOT put J3C_API_SECRET in this file.
+# After deploying, run:
+# npx wrangler secret put J3C_API_SECRET

@@ -1,28 +1,200 @@
-# J3C Rental Properties — Premium Mockup V4
+# J3C Rental Properties — Organized Listings + Editable Unit Data
 
-Next.js mockup for J3C Rental Properties / Fini Homes Condominium, Marulas, Valenzuela.
+This build keeps the public site elegant while making the rental-unit content manageable from the simple owner/admin dashboard.
 
-## V4 refinements
-- corrected desktop header/hero optical alignment
-- mathematically centered desktop navigation
-- refined hero typography and spacing
-- anchor offsets for fixed header navigation
-- scroll-triggered section/photo reveal animations
-- staggered gallery entrance animation
-- cinematic click-to-open photo lightbox with previous/next navigation
-- keyboard controls: Escape, Left Arrow, Right Arrow
-- mobile-friendly gallery/lightbox behavior
-- responsive tenant portal from the previous iteration retained
-- actual supplied J3C logo and property photos retained
+## Current structure
 
-## Run locally
+- Public website: Next.js
+- Admin: `/adminlogin` -> `/admin`
+- Database: Cloudflare D1 through the `j3c-rental-api` Worker
+- Photos: Cloudinary for new admin uploads
+- Shared community imagery: bundled website assets for the current mockup
+- Hosting: Vercel-ready
+
+## What changed in this build
+
+### Public website
+
+- Units are grouped by development/property instead of appearing as one mixed list.
+- Fini Homes Condominium and Chateau Valenzuela are presented as separate rental locations.
+- Chateau Valenzuela includes the supplied shared community/amenity photos once at the development level instead of repeating them on every unit.
+- Current availability supports:
+  - `Available`
+  - `Available Soon`
+  - `Occupied` with a future `available_on` date, so visitors can still inquire in advance.
+- Added confirmed Unit 1, Unit 2, and Unit 3 data to the included seed scripts.
+- Inquiry dropdown includes current and upcoming units.
+
+### Admin dashboard
+
+The dashboard stays intentionally simple. It still only provides the core management actions:
+
+- Add unit
+- Edit unit
+- Delete unit
+- Upload/remove unit photos
+- Update availability
+
+Extra fields were added only because they are needed by the real listings:
+
+- Development / property
+- Unit number
+- Building
+- Floor
+- Unit name
+- Location + full address
+- Monthly rent
+- Status + future availability date
+- Bedrooms / bathrooms
+- Furnishing
+- Utilities / included fixtures
+- Rent inclusions
+- Lease term
+- Description
+- Highlights / amenities
+- Google Maps link
+
+No analytics, booking management, tenant records, or other expansion features were added.
+
+## IMPORTANT: existing bundled photos vs Cloudinary
+
+The current Fini Homes unit photos are still bundled in `/public/photos/unit-1` so the project works immediately. The D1 seed script creates `property_images` rows that point to those local files.
+
+That means the owner can edit the unit from Admin, remove those image rows, and upload replacement photos to Cloudinary. Once replaced, the public site uses the Cloudinary photos. The old bundled files can remain unused or be removed from the project later.
+
+Chateau Valenzuela community photos are shared development-level assets under `/public/photos/chateau`. The newly supplied Janina Bldg. 3rd Floor interior photos are stored separately under `/public/photos/unit-2` and seeded as editable image rows for Unit 2.
+
+## Database setup
+
+A `database` folder is included so the same setup can be recreated quickly on the future client-owned Cloudflare account.
+
+### Fresh client-owned D1 account
+
+Run in this order:
+
+1. `database/01-fresh-schema.sql`
+2. `database/03-seed-current-listings.sql`
+3. `database/04-verify.sql`
+
+### Current test D1 database
+
+The existing database already has the earlier base fields. Run:
+
+1. `database/02-upgrade-existing-db.sql`
+2. `database/03-seed-current-listings.sql`
+3. `database/04-verify.sql`
+
+If one ALTER statement says `duplicate column name`, that field already exists; continue with the remaining statements.
+
+After changing the schema, redeploy the updated Worker code from:
+
+`cloudflare-worker/PASTE-IN-CLOUDFLARE-WORKER.js`
+
+The D1 binding must still be named:
+
+`DB`
+
+and the Worker secret must still be named:
+
+`J3C_API_SECRET`
+
+## Local environment
+
+Copy `.env.example` to `.env.local` and set the actual values:
+
+```env
+J3C_WORKER_API_URL=https://j3c-rental-api.YOUR-SUBDOMAIN.workers.dev
+J3C_WORKER_API_SECRET=YOUR_PRIVATE_SECRET
+
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+CLOUDINARY_UPLOAD_PRESET=j3c-properties
+```
+
+Never use `NEXT_PUBLIC_` for the Worker secret or Cloudinary API secret.
+
+After editing `.env.local`, fully restart Next.js:
+
 ```bash
-npm install
 npm run dev
 ```
-Open `http://localhost:3000`.
 
-## Deploy to Vercel
-Import this folder/repository into Vercel. The project uses standard Next.js commands and requires no extra configuration.
+## Connection test
 
-> Mockup only. Availability, prices, tenant/account information, and inquiry handling are placeholders until connected to real data/services.
+Open:
+
+`http://localhost:3000/api/backend-status`
+
+Expected result after the Worker is correctly deployed:
+
+```json
+{"ok":true,"configured":true,"health":{"ok":true,"service":"j3c-d1-api"}}
+```
+
+Then verify D1 directly with:
+
+```sql
+SELECT * FROM properties ORDER BY id DESC;
+```
+
+## Current listing data included
+
+### Unit 1 — Fini Homes Condominium
+
+- 2 Bedroom Unit - 3rd Floor
+- Marulas, Valenzuela City
+- PHP 18,000/month
+- Condo dues included
+- Fully furnished
+- Minimum 1-year contract
+- Available October 25, 2026
+- Google Maps link included
+- Existing unit photos represented as editable D1 image rows
+
+### Unit 2 — Chateau Valenzuela
+
+- Janina Bldg., 3rd Floor
+- 2 Bedroom Unit
+- Lingunan, Valenzuela City
+- PHP 10,000/month
+- Condo dues included
+- Semi furnished
+- Own electric and water meter
+- 1 window-type aircon
+- 1-year contract
+- Occupied; available February 16, 2027
+- Chateau shared amenities/community photos displayed at the development level
+
+### Unit 3 — Chateau Valenzuela
+
+- Janina Bldg., 5th Floor
+- 2 Bedroom Unit
+- Lingunan, Valenzuela City
+- PHP 9,000/month
+- Condo dues included
+- Semi furnished
+- 1-year contract
+- Occupied; available July 18, 2027
+- Uses the shared Chateau community photos until dedicated Unit 3 interior photos are supplied
+
+## Temporary admin preview credentials
+
+- URL: `/adminlogin`
+- Email: `admin@j3crentalproperties.com`
+- Password: `J3C@Admin2026`
+
+This is still a temporary development login and must be replaced with real authentication before production.
+
+## Photo association note
+
+The five photos received together with the label **“Janina Bldg - Unit 3rd Floor Photos”** are currently assigned to **Unit 2 / Janina Bldg. 3rd Floor**. The newly supplied **Unit 3 / Janina Bldg. 5th Floor** details are included in D1 seed data, but no dedicated Unit 3 interior photos are assigned yet. If those five photos were intended for Unit 3 instead, only the image rows/files need to be reassigned.
+
+## Public listing visibility update
+The public Available Rentals browser now shows all units returned by D1, including occupied units. Availability status and future available dates remain visible on each card so the client can later decide whether occupied listings should stay public or be hidden.
+
+## Listing layout update
+The public rental section uses the classic normal listing-card layout again. All unit cards now keep a consistent size on desktop (two-column grid), including developments with only one listed unit. Full unit details remain available through the detail modal.
+
+## Admin property/location lookup
+The admin form now suggests values already used by existing units for both **Development / property** and **Location**. The owner can still type a brand-new value. Before saving, case, punctuation, and spacing variations that match an existing value are normalized back to the existing spelling so the public property grouping stays consistent.
