@@ -38,7 +38,7 @@ export default function InquiryForm() {
     <form className="inquiry-form" id="inquiry-form" onSubmit={handleSubmit}>
       <div className="form-preview-note">
         <span>Inquiry form preview</span>
-        <small>Final submissions will be connected to J3C&apos;s preferred email.</small>
+        <small>For direct assistance: j3crentalproperties@gmail.com</small>
       </div>
 
       <div className="field-row">

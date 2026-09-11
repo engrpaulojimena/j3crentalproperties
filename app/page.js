@@ -3,6 +3,7 @@ import InquiryForm from './InquiryForm'
 import MotionObserver from './MotionObserver'
 import PublicProperties from './PublicProperties'
 import LocationImageSlider from './LocationImageSlider'
+import HeroBackgroundSlider from './HeroBackgroundSlider'
 
 const gallery = [
   { src: '/photos/unit-1/living-room-02.jpg', label: 'Fini Homes · Living Area', className: 'gallery-landscape' },
@@ -56,13 +57,14 @@ export default function Home() {
             <div className="logo-shell"><Logo compact /></div>
             <span className="brand-copy">
               <strong>J3C Rental Properties</strong>
-              <small>Condominium Unit Rental · Valenzuela</small>
+              <small>Rental Properties · Multiple Locations</small>
             </span>
           </a>
 
           <nav className="desktop-nav" aria-label="Primary navigation">
             <a href="#properties">Available Units</a>
             <a href="#locations">Locations</a>
+            <a href="#about">About</a>
             <a href="#gallery">Gallery</a>
             <a href="#guidelines">FAQs & Guidelines</a>
             <a href="#contact">Contact</a>
@@ -75,6 +77,7 @@ export default function Home() {
             <div className="mobile-menu-panel">
               <a href="#properties">Available Units</a>
               <a href="#locations">Locations</a>
+              <a href="#about">About</a>
               <a href="#gallery">Gallery</a>
               <a href="#guidelines">FAQs & Guidelines</a>
               <a href="#contact">Contact</a>
@@ -85,13 +88,13 @@ export default function Home() {
       </header>
 
       <section className="hero" id="home">
-        <img className="hero-bg" src="/photos/fini-building.jpg" alt="Fini Homes Condominium in Marulas, Valenzuela" fetchPriority="high" decoding="async" />
+        <HeroBackgroundSlider />
         <div className="hero-overlay" />
         <div className="hero-noise" />
 
         <div className="hero-container">
           <div className="hero-copy" data-reveal>
-            <p className="eyebrow eyebrow-light"><span /> J3C · VALENZUELA CITY</p>
+            <p className="eyebrow eyebrow-light"><span /> J3C · RENTAL PROPERTIES</p>
             <h1>Find a space that<br /><em>feels like home.</em></h1>
             <p className="hero-lead">Explore J3C rental properties through real property photos, clear rental information, and a direct inquiry experience designed to make finding your next home simpler.</p>
             <div className="hero-actions">
@@ -116,8 +119,8 @@ export default function Home() {
 
         <div className="hero-bottom">
           <div className="hero-bottom-inner">
-            <span>Actual J3C property photos</span>
-            <span>Fini Homes · Chateau Valenzuela</span>
+            <span>Featured J3C rental communities</span>
+            <span>Valenzuela · Taguig · Alabang · Manila</span>
             <span>Direct rental inquiries</span>
           </div>
         </div>
@@ -154,10 +157,10 @@ export default function Home() {
         <div className="section-container">
           <div className="section-heading location-showcase-heading" data-reveal>
             <div>
-              <p className="eyebrow"><span /> J3C LOCATIONS</p>
-              <h2>Two communities,<br /><em>one clear rental experience.</em></h2>
+              <p className="eyebrow"><span /> FEATURED J3C COMMUNITIES</p>
+              <h2>Featured locations,<br /><em>one clear rental experience.</em></h2>
             </div>
-            <p>Explore the neighborhoods where J3C currently manages rental units. Individual unit information stays in the live listings above, while shared community details are presented here once for a cleaner browsing experience.</p>
+            <p>Explore two of J3C&apos;s featured Valenzuela communities below. The live listings above may also include J3C-managed rentals in Taguig, Alabang, and Manila.</p>
           </div>
 
           <div className="location-showcase-grid">
@@ -200,23 +203,41 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="brand-story" id="services">
+      <section className="brand-story" id="about">
         <div className="brand-story-image" data-reveal>
-          <img src="/photos/chateau/buildings.jpg" alt="Chateau Valenzuela community buildings" />
+          <img src="/photos/hero/01-fini-entrance.webp" alt="J3C rental property community entrance" />
           <div className="brand-story-overlay" />
-          <div className="brand-story-caption"><span>J3C Rental Properties</span><strong>Valenzuela City</strong></div>
+          <div className="brand-story-caption"><span>J3C Rental Properties</span><strong>Serving renters since 2018</strong></div>
         </div>
 
         <div className="brand-story-copy" data-reveal style={{ '--reveal-delay': '100ms' }}>
           <div className="story-logo"><Logo /></div>
-          <p className="eyebrow eyebrow-light"><span /> THE J3C EXPERIENCE</p>
-          <h2>Rental information,<br /><em>made easier.</em></h2>
-          <p>Visitors can browse current and upcoming units, review real property photos, see rates and basic terms, then contact J3C directly for the next step.</p>
+          <p className="eyebrow eyebrow-light"><span /> ABOUT J3C RENTAL PROPERTIES</p>
+          <h2>Built through experience,<br /><em>managed with care.</em></h2>
+          <p>J3C Rental Properties began in June 2018 with a studio-type condominium unit operated as a bedspace at Avida Towers San Lazaro in Sta. Cruz, Manila. The business grew through the collaboration of owner Nathaniel Alexander Torres and property manager Josephine De Guia, expanding from its first rental into a wider portfolio of condominium units and accommodations.</p>
+          <p className="about-secondary-copy">Today, J3C manages 9 quality condo units across Valenzuela, Taguig, and Muntinlupa-Alabang, together with its bedspace accommodation in Manila. The focus remains simple: clean, safe, and comfortable living spaces supported by hands-on property management.</p>
+
+          <div className="about-stats" aria-label="J3C business highlights">
+            <div><strong>2018</strong><span>Established</span></div>
+            <div><strong>9</strong><span>Quality condo units</span></div>
+            <div><strong>2027</strong><span>Pampanga expansion</span></div>
+          </div>
+
+          <div className="about-values" aria-label="Why choose J3C Rental Properties">
+            <div><strong>Proven Experience</strong><span>Serving renters since 2018.</span></div>
+            <div><strong>Prime Locations</strong><span>Properties across key Metro Manila areas.</span></div>
+            <div><strong>Trusted & Caring Service</strong><span>Hands-on management with a personal approach.</span></div>
+          </div>
 
           <div className="services-list">
-            <div><b>01</b><span><strong>Browse by Property</strong><small>Units are grouped by development so multiple J3C rentals stay organized.</small></span></div>
-            <div><b>02</b><span><strong>Review Unit Details</strong><small>Rates, availability, furnishing, photos, and important rental information.</small></span></div>
-            <div><b>03</b><span><strong>Inquire Directly</strong><small>Contact J3C through the website inquiry form or preferred messaging channel.</small></span></div>
+            <div><b>01</b><span><strong>Condominium Rentals</strong><small>Long-term and short-term rental options in fully furnished and semi-furnished units near key commercial districts and transport hubs.</small></span></div>
+            <div><b>02</b><span><strong>Studio & Bedspace Accommodation</strong><small>Affordable accommodation options, including J3C&apos;s bedspace at Avida Towers San Lazaro in Sta. Cruz, Manila.</small></span></div>
+            <div><b>03</b><span><strong>Property Management & Leasing</strong><small>Hands-on property oversight designed to support owners while keeping the rental experience clear and convenient for tenants.</small></span></div>
+          </div>
+
+          <div className="about-note">
+            <span>COMING 2027</span>
+            <p>J3C plans to expand into Pampanga with residential house and apartment rentals in Cheerful Homes, Mabalacat and Amaia Scapes, Mexico.</p>
           </div>
         </div>
       </section>
@@ -228,7 +249,7 @@ export default function Home() {
               <p className="eyebrow"><span /> RENTAL INFORMATION HUB</p>
               <h2>Know what to expect<br /><em>before you inquire.</em></h2>
             </div>
-            <p>This section replaces the tenant portal and will contain J3C&apos;s official FAQs, rental guidelines, requirements, rates and terms, plus location details. Draft placeholders are shown until final content is provided.</p>
+            <p>Review J3C&apos;s official frequently asked questions, rental guidelines, move-in requirements, standard payment terms, and property location information before choosing a unit.</p>
           </div>
 
           <div className="info-hub-grid">
@@ -238,56 +259,78 @@ export default function Home() {
               <h3>Quick answers for renters.</h3>
               <div className="faq-list">
                 <details open>
-                  <summary>How do I check if a unit is available?</summary>
-                  <p>Availability may change. Use the inquiry section to contact J3C for the latest unit status.</p>
+                  <summary>How can I inquire or schedule a viewing?</summary>
+                  <p>Browse the official website for property listings, or contact J3C directly by phone call, text, Viber, or WhatsApp to arrange a viewing with the property management team.</p>
                 </details>
                 <details>
-                  <summary>Where can I ask about rental rates?</summary>
-                  <p>Current rates and payment terms will be confirmed by J3C through the website or direct inquiry channels.</p>
+                  <summary>Are water and electricity included in the rent?</summary>
+                  <p>Unless a specific unit package states otherwise, water and electricity are separate and paid by the tenant based on individual consumption or billing statements.</p>
                 </details>
                 <details>
-                  <summary>Can I ask to view the property?</summary>
-                  <p>Yes. Send an inquiry and J3C can provide the next steps based on the property&apos;s availability.</p>
+                  <summary>Can I reserve a unit in advance?</summary>
+                  <p>Yes. A unit may be reserved after completing the initial reservation requirements and agreement terms.</p>
+                </details>
+                <details>
+                  <summary>Are pets allowed?</summary>
+                  <p>No. J3C&apos;s standard rental units follow a no-pets policy to help maintain cleanliness, hygiene, and resident comfort.</p>
+                </details>
+                <details>
+                  <summary>Are condo dues included in the monthly rent?</summary>
+                  <p>Yes. Condo dues are included in J3C rental rates and are handled by management to help ensure association dues remain updated.</p>
                 </details>
               </div>
             </article>
 
             <article className="info-card" data-reveal style={{ '--reveal-delay': '80ms' }}>
               <div className="info-card-number">02</div>
-              <div className="info-card-kicker">Guidelines & Requirements</div>
-              <h3>Everything needed before renting.</h3>
+              <div className="info-card-kicker">Rental Guidelines & House Rules</div>
+              <h3>Simple rules for a peaceful stay.</h3>
               <ul className="info-checklist">
-                <li><span>Rental requirements</span><small>Official document checklist to be supplied by J3C.</small></li>
-                <li><span>Rental guidelines</span><small>Property rules, occupancy guidance, and renter responsibilities.</small></li>
-                <li><span>Move-in information</span><small>Process and required steps will be added once confirmed.</small></li>
+                <li><span>Quiet hours</span><small>Observe peace and quiet, especially during standard neighborhood resting hours.</small></li>
+                <li><span>Cleanliness & maintenance</span><small>Keep the rented space clean and well-maintained. Major repairs caused by tenant negligence may be charged accordingly.</small></li>
+                <li><span>No smoking indoors</span><small>Smoking inside enclosed rental units is strictly prohibited.</small></li>
+                <li><span>No pets</span><small>Pets are not allowed within J3C rental property premises.</small></li>
+                <li><span>Registered occupants only</span><small>Unauthorized sub-leasing and indefinite stays by unregistered occupants are prohibited.</small></li>
+                <li><span>Scheduled inspections</span><small>Management may conduct routine property checks with prior notice for upkeep and safety.</small></li>
               </ul>
-              <div className="draft-chip">Content for client confirmation</div>
+            </article>
+
+            <article className="info-card" data-reveal style={{ '--reveal-delay': '120ms' }}>
+              <div className="info-card-number">03</div>
+              <div className="info-card-kicker">Rental Requirements</div>
+              <h3>Prepare these before move-in.</h3>
+              <ul className="info-checklist">
+                <li><span>Two valid IDs</span><small>At least two government-issued IDs for tenant verification.</small></li>
+                <li><span>Tenant information sheet</span><small>A fully accomplished and signed tenant profile form.</small></li>
+                <li><span>Proof of capacity to pay</span><small>Employed applicants may submit a COE, payslips, or employment contract. Business owners or freelancers may submit business registration, bank statements, or proof of income source.</small></li>
+                <li><span>Initial payment</span><small>Required deposits and advance payments must be completed before move-in.</small></li>
+              </ul>
             </article>
 
             <article className="info-card info-card-accent" data-reveal style={{ '--reveal-delay': '160ms' }}>
-              <div className="info-card-number">03</div>
+              <div className="info-card-number">04</div>
               <div className="info-card-kicker">Rates & Terms / Pricing</div>
               <h3>Clear costs. Clear expectations.</h3>
               <div className="rate-preview">
-                <span>Current rental rate</span>
-                <strong>Available upon inquiry</strong>
-                <small>Final monthly rates, deposits, advance payments, lease terms, and applicable fees will be published after J3C confirmation.</small>
+                <span>Standard payment terms</span>
+                <strong>1 month advance + 2 months deposit</strong>
+                <small>Rental rates vary by location, unit type, and property features. Exact monthly rates are shown in the current listings or can be confirmed directly with J3C.</small>
               </div>
-              <a href="#contact" className="info-card-link">Ask about current rates <Arrow /></a>
+              <a href="#properties" className="info-card-link">View current rental rates <Arrow /></a>
             </article>
 
             <article className="info-card info-card-location" data-reveal style={{ '--reveal-delay': '240ms' }}>
-              <div className="info-card-number">04</div>
-              <div className="info-card-kicker">Location / How to Get There</div>
-              <h3>J3C Locations</h3>
-              <p className="location-copy">Fini Homes · Marulas & Chateau Valenzuela · Lingunan</p>
-              <div className="location-visual" aria-hidden="true">
-                <span className="map-road map-road-a" />
-                <span className="map-road map-road-b" />
-                <span className="map-road map-road-c" />
-                <span className="map-pin">J3C</span>
-              </div>
-              <a className="info-card-link" href="#locations">View property locations <Arrow /></a>
+              <div className="info-card-number">05</div>
+              <div className="info-card-kicker">Locations / How to Get There</div>
+              <h3>J3C Property Areas</h3>
+              <ul className="area-list">
+                <li><strong>Manila</strong><span>Avida Towers San Lazaro · Sta. Cruz</span></li>
+                <li><strong>Valenzuela</strong><span>Chateau Valenzuela · Fini Homes</span></li>
+                <li><strong>Taguig</strong><span>Pacific Residences</span></li>
+                <li><strong>Alabang</strong><span>Avida Towers Altura · Muntinlupa</span></li>
+                <li><strong>Pampanga · 2027</strong><span>Cheerful Homes · Mabalacat & Amaia Scapes · Mexico</span></li>
+              </ul>
+              <a className="info-card-link" href="#locations">View featured property locations <Arrow /></a>
             </article>
           </div>
         </div>
@@ -310,25 +353,25 @@ export default function Home() {
           <p>Choose your preferred contact channel or leave your name, number, and question through the inquiry form below.</p>
 
           <div className="contact-channels" aria-label="Direct contact options">
-            <a href="#inquiry-form" className="contact-channel channel-viber" aria-label="Contact J3C through Viber">
+            <a href="viber://chat?number=%2B639473068528" className="contact-channel channel-viber" aria-label="Contact J3C through Viber">
               <span className="channel-brand-icon" aria-hidden="true">
                 <img src="https://cdn.simpleicons.org/viber/7360F2" alt="" />
               </span>
-              <span><strong>Viber</strong><small>Official account to be connected</small></span>
+              <span><strong>Viber</strong><small>+63 947 306 8528</small></span>
               <Arrow />
             </a>
-            <a href="#inquiry-form" className="contact-channel channel-whatsapp" aria-label="Contact J3C through WhatsApp">
+            <a href="https://wa.me/639473068528" target="_blank" rel="noreferrer" className="contact-channel channel-whatsapp" aria-label="Contact J3C through WhatsApp">
               <span className="channel-brand-icon" aria-hidden="true">
                 <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="" />
               </span>
-              <span><strong>WhatsApp</strong><small>Official number to be connected</small></span>
+              <span><strong>WhatsApp</strong><small>+63 947 306 8528</small></span>
               <Arrow />
             </a>
             <a href="#inquiry-form" className="contact-channel channel-messenger" aria-label="Contact J3C through Messenger">
               <span className="channel-brand-icon" aria-hidden="true">
                 <img src="https://cdn.simpleicons.org/messenger/00B2FF" alt="" />
               </span>
-              <span><strong>Messenger</strong><small>Official page to be connected</small></span>
+              <span><strong>Messenger</strong><small>Use the inquiry form for now</small></span>
               <Arrow />
             </a>
           </div>
@@ -337,7 +380,9 @@ export default function Home() {
 
           <div className="office-line">
             <span>Management Office</span>
-            <strong>306 Janina Bldg., Chateau Valenzuela</strong>
+            <strong>306 Janina Bldg., P. Gregorio St., Brgy. Lingunan, Valenzuela City</strong>
+            <a href="tel:+639473068528">+63 947 306 8528</a>
+            <a href="mailto:j3crentalproperties@gmail.com">j3crentalproperties@gmail.com</a>
           </div>
         </div>
       </section>
@@ -348,8 +393,8 @@ export default function Home() {
             <div className="logo-shell"><Logo compact /></div>
             <span className="brand-copy"><strong>J3C Rental Properties</strong><small>Condominium Unit Rental</small></span>
           </a>
-          <p>J3C Rental Properties · Valenzuela City</p>
-          <div className="footer-links"><a href="#properties">Available Units</a><a href="#guidelines">FAQs & Guidelines</a><a href="#contact">Contact</a></div>
+          <p>J3C Rental Properties · Serving renters since 2018</p>
+          <div className="footer-links"><a href="#properties">Available Units</a><a href="#about">About</a><a href="#guidelines">FAQs & Guidelines</a><a href="#contact">Contact</a></div>
         </div>
       </footer>
     </main>

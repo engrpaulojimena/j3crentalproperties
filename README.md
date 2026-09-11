@@ -2,6 +2,19 @@
 
 This build keeps the public site elegant while making the rental-unit content manageable from the simple owner/admin dashboard.
 
+
+### Client-provided website content
+
+The public website now includes the finalized client-provided business profile and rental information:
+
+- New About section with J3C history, services, experience highlights, current portfolio summary, and planned Pampanga expansion for 2027.
+- Official FAQs covering inquiries/viewings, utilities, advance reservation, pets, and condo dues.
+- Rental guidelines covering quiet hours, cleanliness, smoking, pets, occupancy, and scheduled inspections.
+- Rental requirements covering valid IDs, tenant information sheet, proof of capacity to pay, and initial payment requirements.
+- Standard payment terms: 1 month advance plus 2 months security deposit.
+- Property-area overview for Manila, Valenzuela, Taguig, Alabang, and planned Pampanga locations.
+- Official contact number and Gmail address added to the contact section, with the provided number linked to Viber and WhatsApp.
+
 ## Current structure
 
 - Public website: Next.js
@@ -198,3 +211,21 @@ The public rental section uses the classic normal listing-card layout again. All
 
 ## Admin property/location lookup
 The admin form now suggests values already used by existing units for both **Development / property** and **Location**. The owner can still type a brand-new value. Before saving, case, punctuation, and spacing variations that match an existing value are normalized back to the existing spelling so the public property grouping stays consistent.
+
+## 2026-09-11 admin fixes
+- Admin sidebar is now fixed to the full viewport height on desktop and no longer ends halfway down long property lists.
+- Edit Unit now sends and reloads all visible property fields reliably.
+- Worker PUT merges with the existing D1 record before updating so fields that are not exposed in the form (such as slug / featured state) are not accidentally erased.
+- Development / property is required to keep public property grouping consistent.
+- The updated Worker health response reports version `2026-09-11-admin-save-v2`.
+
+IMPORTANT: Redeploy `cloudflare-worker/PASTE-IN-CLOUDFLARE-WORKER.js` to the Cloudflare Worker after updating the Next.js project. Frontend-only deployment will not fix D1 update persistence if an older Worker is still deployed.
+
+## Property detail modal layout fix
+The public property modal now uses a balanced desktop layout: the gallery fills the left panel without leaving a large empty navy area, while the property details scroll independently on the right. On tablet/mobile the modal stacks and uses a single natural scroll. Long unit titles also scale down and wrap more cleanly.
+
+## Homepage hero slider + browser icon
+- Homepage hero background now rotates through six enhanced property/community images automatically every 3 seconds.
+- The transition is a smooth cross-fade with a subtle zoom; there are intentionally no slider arrows, dots, or controls.
+- Hero images are optimized WebP files under `public/photos/hero/`.
+- Browser favicon is `public/favicon.svg` and is registered through Next.js metadata in `app/layout.js`.

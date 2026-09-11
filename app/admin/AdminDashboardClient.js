@@ -87,6 +87,8 @@ const emptyForm = {
   lease_term: '',
   map_url: '',
   amenities: '',
+  slug: '',
+  is_featured: 0,
 }
 
 function formatPeso(value) {
@@ -145,6 +147,8 @@ function normalizeProperty(property) {
     lease_term: property.lease_term || '',
     map_url: property.map_url || '',
     amenities: property.amenities || '',
+    slug: property.slug || '',
+    is_featured: Number(property.is_featured || 0),
     images: Array.isArray(property.images) ? property.images : [],
   }
 }
@@ -261,6 +265,8 @@ export default function AdminDashboardClient() {
       lease_term: unit.lease_term || '',
       map_url: unit.map_url || '',
       amenities: unit.amenities || '',
+      slug: unit.slug || '',
+      is_featured: Number(unit.is_featured || 0),
     })
     setSelectedFiles([])
     setStatusMessage('')
@@ -350,9 +356,14 @@ export default function AdminDashboardClient() {
       lease_term: form.lease_term.trim(),
       map_url: form.map_url.trim(),
       amenities: form.amenities.trim(),
+      slug: form.slug || '',
+      is_featured: Number(form.is_featured || 0),
     }
 
-    if (!payload.name || !payload.location || !payload.monthly_rate) return
+    if (!payload.development_name || !payload.name || !payload.location || !payload.monthly_rate) {
+      setStatusMessage('Property/development, unit name, location, and monthly rate are required.')
+      return
+    }
     setSaving(true)
     setStatusMessage('')
 
@@ -391,6 +402,7 @@ export default function AdminDashboardClient() {
       }
 
       closeModal()
+      setStatusMessage(editingId ? 'Unit details updated successfully.' : 'Unit added successfully.')
     } catch (error) {
       setStatusMessage(error.message || 'Something went wrong while saving.')
     } finally {
@@ -539,6 +551,7 @@ export default function AdminDashboardClient() {
                     onBlur={() => handleLookupBlur('development_name', developmentOptions)}
                     placeholder="Search or type property name"
                     autoComplete="off"
+                    required
                   />
                   <datalist id="j3c-development-options">
                     {developmentOptions.map((option) => <option value={option} key={option} />)}

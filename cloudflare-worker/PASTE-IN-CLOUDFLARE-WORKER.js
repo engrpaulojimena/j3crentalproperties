@@ -17,30 +17,43 @@ async function readJson(request) {
   }
 }
 
+function slugify(value) {
+  return String(value || '')
+    .normalize('NFKD')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
 function propertyPayload(input = {}) {
+  const name = String(input.name ?? '').trim()
+  const developmentName = String(input.development_name ?? '').trim()
+  const unitCode = String(input.unit_code ?? '').trim()
+  const existingSlug = String(input.slug ?? '').trim()
+
   return {
-    name: String(input.name || '').trim(),
-    development_name: String(input.development_name || '').trim(),
-    building_name: String(input.building_name || '').trim(),
-    floor_label: String(input.floor_label || '').trim(),
-    location: String(input.location || '').trim(),
-    full_address: String(input.full_address || '').trim(),
+    name,
+    development_name: developmentName,
+    building_name: String(input.building_name ?? '').trim(),
+    floor_label: String(input.floor_label ?? '').trim(),
+    location: String(input.location ?? '').trim(),
+    full_address: String(input.full_address ?? '').trim(),
     monthly_rate: Number(input.monthly_rate ?? input.rate ?? 0),
     status: ['Available', 'Available Soon', 'Occupied'].includes(input.status) ? input.status : 'Available',
     available_on: input.available_on ? String(input.available_on).trim() : null,
-    description: String(input.description || '').trim(),
-    rent_includes: String(input.rent_includes || '').trim(),
-    lease_term: String(input.lease_term || '').trim(),
-    map_url: String(input.map_url || '').trim(),
-    unit_code: String(input.unit_code || '').trim(),
-    property_type: String(input.property_type || 'Condominium').trim(),
-    bedrooms: Number(input.bedrooms || 0),
-    bathrooms: Number(input.bathrooms || 0),
-    furnishing: String(input.furnishing || '').trim(),
-    utility_notes: String(input.utility_notes || '').trim(),
-    amenities: typeof input.amenities === 'string' ? input.amenities : JSON.stringify(input.amenities || []),
-    is_featured: input.is_featured ? 1 : 0,
-    slug: String(input.slug || '').trim(),
+    description: String(input.description ?? '').trim(),
+    rent_includes: String(input.rent_includes ?? '').trim(),
+    lease_term: String(input.lease_term ?? '').trim(),
+    map_url: String(input.map_url ?? '').trim(),
+    unit_code: unitCode,
+    property_type: String(input.property_type ?? 'Condominium').trim() || 'Condominium',
+    bedrooms: Number(input.bedrooms ?? 0),
+    bathrooms: Number(input.bathrooms ?? 0),
+    furnishing: String(input.furnishing ?? '').trim(),
+    utility_notes: String(input.utility_notes ?? '').trim(),
+    amenities: typeof input.amenities === 'string' ? input.amenities.trim() : JSON.stringify(input.amenities || []),
+    is_featured: Number(input.is_featured || 0) ? 1 : 0,
+    slug: existingSlug || slugify([developmentName, unitCode || name].filter(Boolean).join(' ')),
   }
 }
 
@@ -106,7 +119,7 @@ export default {
 
     try {
       if (path === '/health' && method === 'GET') {
-        return json({ ok: true, service: 'j3c-d1-api' })
+        return json({ ok: true, service: 'j3c-d1-api', version: '2026-09-11-admin-save-v2' })
       }
 
       if (path === '/properties' && method === 'GET') {
@@ -116,8 +129,8 @@ export default {
       if (path === '/properties' && method === 'POST') {
         const input = await readJson(request)
         const data = propertyPayload(input)
-        if (!data.name || !data.location || !data.monthly_rate) {
-          return json({ error: 'Name, location, and monthly rate are required.' }, 400)
+        if (!data.development_name || !data.name || !data.location || !data.monthly_rate) {
+          return json({ error: 'Property/development, name, location, and monthly rate are required.' }, 400)
         }
 
         const result = await env.DB.prepare(
@@ -148,10 +161,13 @@ export default {
         }
 
         if (method === 'PUT') {
+          const existing = await getProperty(env, id)
+          if (!existing) return json({ error: 'Property not found.' }, 404)
+
           const input = await readJson(request)
-          const data = propertyPayload(input)
-          if (!data.name || !data.location || !data.monthly_rate) {
-            return json({ error: 'Name, location, and monthly rate are required.' }, 400)
+          const data = propertyPayload({ ...existing, ...(input || {}) })
+          if (!data.development_name || !data.name || !data.location || !data.monthly_rate) {
+            return json({ error: 'Property/development, name, location, and monthly rate are required.' }, 400)
           }
 
           const result = await env.DB.prepare(
