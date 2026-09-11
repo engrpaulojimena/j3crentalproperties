@@ -4,18 +4,14 @@ import { useEffect, useMemo, useState } from 'react'
 
 const developmentProfiles = {
   'Fini Homes Condominium': {
-    location: 'Marulas, Valenzuela City',
-    address: '80 Ramon Delfin Street, Barangay Marulas, Valenzuela City, 1440 Metro Manila',
     summary: 'Gated condominium community with 24-hour security, swimming pool, clubhouse, and convenient access to OLFU and Monumento LRT.',
     fallbackImage: '/photos/fini-building.jpg',
-    portfolioLabel: 'J3C-managed rental',
+    portfolioLabel: 'J3C-managed rental community',
   },
   'Chateau Valenzuela': {
-    location: 'Lingunan, Valenzuela City',
-    address: '16 P. Gregorio Street, Brgy. Lingunan, Valenzuela City, 1446 Metro Manila',
     summary: 'A secured, peaceful community with shared amenities and convenient access to NLEX, Dalandanan, and Paso de Blas.',
     fallbackImage: '/photos/chateau/buildings.jpg',
-    portfolioLabel: '5 J3C-managed units',
+    portfolioLabel: 'J3C-managed rental community',
     gallery: [
       { src: '/photos/chateau/main-gate.jpg', label: 'Main Gate' },
       { src: '/photos/chateau/buildings.jpg', label: 'Buildings' },
@@ -252,8 +248,8 @@ export default function PublicProperties() {
         <div className="property-development-list">
           {groupedProperties.map((group, groupIndex) => {
             const profile = group.profile
-            const address = profile.address || group.units.find((unit) => unit.full_address)?.full_address
-            const shortLocation = profile.location || group.units.find((unit) => unit.location)?.location
+            const address = group.units.find((unit) => unit.full_address)?.full_address
+            const shortLocation = group.units.find((unit) => unit.location)?.location
             return (
               <section
                 className={`property-development ${group.units.length === 1 ? 'single-unit' : ''}`}

@@ -67,8 +67,7 @@ export default function InquiryForm() {
             })
           ) : (
             <>
-              <option value="Fini Homes Condominium">Fini Homes Condominium</option>
-              <option value="Other J3C property">Other J3C property</option>
+              <option value="">Select from live properties</option>
               <option value="Not sure yet">Not sure yet</option>
             </>
           )}

@@ -159,7 +159,7 @@ h1 em,h2 em{font-weight:500;color:var(--gold-2)}
 .contact-image{position:relative;overflow:hidden}.contact-image>img{height:100%;object-fit:cover}.contact-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(4,12,27,.84),rgba(4,12,27,.08) 62%)}
 .contact-message{position:absolute;z-index:2;left:6vw;bottom:58px}.contact-message p{margin:0 0 12px;color:var(--gold-2);font-size:10px;font-weight:800;letter-spacing:.17em}.contact-message h2{font-size:clamp(48px,4.4vw,70px)}
 .contact-panel{padding:80px max(6vw,70px);display:flex;flex-direction:column;justify-content:center}.contact-panel>p:not(.eyebrow){max-width:520px;color:#b5bfcd;font-size:14px;line-height:1.75}.contact-panel>h2{font-size:clamp(48px,4.4vw,70px)}
-.inquiry-form{margin-top:24px}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.inquiry-form label{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;color:#aeb8c8;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}.inquiry-form input,.inquiry-form select,.inquiry-form textarea{width:100%;padding:13px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.15);outline:0;background:rgba(255,255,255,.055);color:#fff;transition:border .25s ease,background .25s ease}.inquiry-form input::placeholder,.inquiry-form textarea::placeholder{color:#7c899b}.inquiry-form select option{color:#172036}.inquiry-form input:focus,.inquiry-form select:focus,.inquiry-form textarea:focus{border-color:rgba(216,182,109,.76);background:rgba(255,255,255,.085)}
+.inquiry-form{margin-top:24px}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.inquiry-form label{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;color:#aeb8c8;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}.inquiry-form input,.inquiry-form select,.inquiry-form textarea{width:100%;padding:13px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.15);outline:0;background:rgba(255,255,255,.055);color:#f4f7fb;font-size:13px;font-weight:500;line-height:1.5;letter-spacing:0;text-transform:none;transition:border .25s ease,background .25s ease}.inquiry-form input::placeholder,.inquiry-form textarea::placeholder{color:#8f9bad;font-weight:400;letter-spacing:0;text-transform:none;opacity:1}.inquiry-form select option{color:#172036}.inquiry-form input:focus,.inquiry-form select:focus,.inquiry-form textarea:focus{border-color:rgba(216,182,109,.76);background:rgba(255,255,255,.085)}
 .office-line{margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);display:flex;flex-direction:column;gap:5px}.office-line span{font-size:8px;text-transform:uppercase;letter-spacing:.13em;color:#8e9aaa}.office-line strong{font-family:"Iowan Old Style",Baskerville,serif;font-size:16px;font-weight:500;color:#f3f0e8}
 
 footer{background:var(--paper);border-top:1px solid var(--line)}.footer-inner{min-height:100px;display:flex;align-items:center;justify-content:space-between;gap:30px}.footer-brand .logo-shell{width:44px;height:44px}.footer-inner>p{margin:0;color:#92938f;font-size:9px}.footer-links{display:flex;gap:24px;color:#606979;font-size:10px;font-weight:700}
@@ -1639,3 +1639,36 @@ body{overflow-x:clip}
 .about-values strong{font-family:"Iowan Old Style",Baskerville,serif;color:#fff;font-size:14px;font-weight:600}
 .about-values span{color:#9eabba;font-size:9px;line-height:1.45}
 @media(max-width:720px){.about-values{grid-template-columns:1fr}}
+
+/* ===== Live database locations + team section ===== */
+.location-live-state{
+  display:flex;align-items:center;gap:10px;min-height:120px;padding:24px;border:1px solid #e4ddd1;border-radius:22px;
+  background:#f9f7f2;color:#6f7681;font-size:13px;
+}
+.location-live-state .live-dot{flex:0 0 auto}
+.location-live-error{justify-content:space-between;flex-wrap:wrap}
+.location-live-error button{border:1px solid #d9d0c1;border-radius:999px;background:#fff;padding:9px 14px;color:var(--navy);font-weight:800;cursor:pointer}
+
+.team-section{
+  position:relative;overflow:hidden;background:
+    radial-gradient(circle at 88% 10%,rgba(205,162,85,.12),transparent 30%),
+    linear-gradient(180deg,#f8f5ee 0%,#f2ede4 100%);
+}
+.team-heading{display:grid;grid-template-columns:1fr .72fr;gap:70px;align-items:end;margin-bottom:34px}
+.team-heading>p{margin:0 0 5px;color:var(--muted);font-size:14px;line-height:1.8;max-width:600px}
+.team-heading h2 em{color:#9b742e}
+.team-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.team-card{position:relative;min-height:315px;padding:28px;border:1px solid rgba(8,23,47,.1);border-radius:24px;background:rgba(255,255,255,.86);box-shadow:0 22px 55px rgba(8,23,47,.07);overflow:hidden}
+.team-card:before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),rgba(184,135,53,.15))}
+.team-card-mark{width:112px;height:112px;margin-bottom:42px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(184,135,53,.28);background:radial-gradient(circle at 35% 30%,#fff,#eee7da);color:var(--navy);font-family:"Iowan Old Style",Baskerville,serif;font-size:34px;font-weight:600;box-shadow:inset 0 0 0 8px rgba(184,135,53,.06)}
+.team-card>span{display:block;margin-bottom:10px;color:#9a762f;font-size:9px;font-weight:900;letter-spacing:.15em}
+.team-card h3{margin:0;color:var(--navy);font-family:"Iowan Old Style",Baskerville,serif;font-size:28px;font-weight:600;letter-spacing:-.025em}
+.team-card p{margin:11px 0 0;color:#737b87;font-size:11px;line-height:1.75}
+.team-card-management{background:linear-gradient(160deg,rgba(8,23,47,.98),rgba(19,43,73,.98));border-color:rgba(255,255,255,.08)}
+.team-card-management .team-card-mark{background:rgba(255,255,255,.07);border-color:rgba(216,182,109,.32);color:#e3c680;box-shadow:inset 0 0 0 8px rgba(255,255,255,.025)}
+.team-card-management>span{color:#d7b76e}.team-card-management h3{color:#fff}.team-card-management p{color:#b9c1cc}
+
+@media(max-width:900px){
+  .team-heading{grid-template-columns:1fr;gap:18px}.team-grid{grid-template-columns:1fr}.team-card{min-height:0}.team-card-mark{margin-bottom:28px}
+}
+.database-location-note{margin:0 0 18px!important;color:#737b87!important;font-size:11px!important;line-height:1.7}

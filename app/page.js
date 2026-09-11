@@ -2,7 +2,9 @@ import GalleryShowcase from './GalleryShowcase'
 import InquiryForm from './InquiryForm'
 import MotionObserver from './MotionObserver'
 import PublicProperties from './PublicProperties'
-import LocationImageSlider from './LocationImageSlider'
+import LocationsShowcase from './LocationsShowcase'
+import MobileMenu from './MobileMenu'
+import DatabaseLocationList from './DatabaseLocationList'
 import HeroBackgroundSlider from './HeroBackgroundSlider'
 
 const gallery = [
@@ -13,24 +15,6 @@ const gallery = [
   { src: '/photos/unit-1/bedroom-bunk.jpg', label: 'Fini Homes · Bedroom', className: 'gallery-portrait' },
   { src: '/photos/chateau/basketball-court.jpg', label: 'Chateau Valenzuela · Basketball Court', className: 'gallery-landscape' },
 ]
-const locationShowcase = {
-  fini: [
-    { src: '/photos/fini-building.jpg', label: 'Fini Homes Exterior', alt: 'Fini Homes Condominium exterior' },
-    { src: '/photos/fini-dining.jpg', label: 'Dining Area', alt: 'Fini Homes dining area' },
-    { src: '/photos/fini-living-02.jpg', label: 'Living Area', alt: 'Fini Homes living area' },
-    { src: '/photos/fini-kitchen.jpg', label: 'Kitchen', alt: 'Fini Homes kitchen area' },
-    { src: '/photos/fini-bedroom.jpg', label: 'Bedroom', alt: 'Fini Homes bedroom' },
-    { src: '/photos/fini-bathroom-01.jpg', label: 'Bathroom', alt: 'Fini Homes bathroom' },
-  ],
-  chateau: [
-    { src: '/photos/chateau/main-gate.jpg', label: 'Main Gate', alt: 'Chateau Valenzuela main gate' },
-    { src: '/photos/chateau/buildings.jpg', label: 'Buildings', alt: 'Chateau Valenzuela buildings' },
-    { src: '/photos/chateau/clubhouse.jpg', label: 'Clubhouse', alt: 'Chateau Valenzuela clubhouse' },
-    { src: '/photos/chateau/pool.jpg', label: 'Swimming Pool', alt: 'Chateau Valenzuela swimming pool' },
-    { src: '/photos/chateau/basketball-court.jpg', label: 'Basketball Court', alt: 'Chateau Valenzuela basketball court' },
-    { src: '/photos/chateau/park.jpg', label: 'Park & Landscaped Area', alt: 'Chateau Valenzuela pool and landscaped area' },
-  ],
-}
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>
@@ -62,9 +46,9 @@ export default function Home() {
           </a>
 
           <nav className="desktop-nav" aria-label="Primary navigation">
-            <a href="#properties">Available Units</a>
+            <a href="#about">About Us</a>
             <a href="#locations">Locations</a>
-            <a href="#about">About</a>
+            <a href="#properties">Available Units</a>
             <a href="#gallery">Gallery</a>
             <a href="#guidelines">FAQs & Guidelines</a>
             <a href="#contact">Contact</a>
@@ -72,18 +56,7 @@ export default function Home() {
 
           <a className="btn btn-navy desktop-cta" href="#contact">Inquire Now</a>
 
-          <details className="mobile-menu">
-            <summary aria-label="Open menu">Menu</summary>
-            <div className="mobile-menu-panel">
-              <a href="#properties">Available Units</a>
-              <a href="#locations">Locations</a>
-              <a href="#about">About</a>
-              <a href="#gallery">Gallery</a>
-              <a href="#guidelines">FAQs & Guidelines</a>
-              <a href="#contact">Contact</a>
-              <a className="btn btn-gold" href="#contact">Inquire Now</a>
-            </div>
-          </details>
+          <MobileMenu />
         </div>
       </header>
 
@@ -160,32 +133,10 @@ export default function Home() {
               <p className="eyebrow"><span /> FEATURED J3C COMMUNITIES</p>
               <h2>Featured locations,<br /><em>one clear rental experience.</em></h2>
             </div>
-            <p>Explore two of J3C&apos;s featured Valenzuela communities below. The live listings above may also include J3C-managed rentals in Taguig, Alabang, and Manila.</p>
+            <p>Property names, addresses, map links, unit counts, and location details below are pulled from the live rental database so updates made in Admin stay consistent on the public site.</p>
           </div>
 
-          <div className="location-showcase-grid">
-            <article className="location-property-card" data-reveal>
-              <div className="location-property-media"><LocationImageSlider images={locationShowcase.fini} title="Fini Homes Condominium photos" /></div>
-              <div className="location-property-copy">
-                <span>MARULAS · VALENZUELA CITY</span>
-                <h3>Fini Homes Condominium</h3>
-                <p>80 Ramon Delfin Street, Barangay Marulas, Valenzuela City, 1440 Metro Manila</p>
-                <div className="location-tags"><b>24-hr security</b><b>Swimming pool</b><b>Clubhouse</b><b>Near OLFU</b></div>
-                <a href="https://maps.app.goo.gl/brh4UNvehwBPC4qc9" target="_blank" rel="noreferrer">Open location <Arrow /></a>
-              </div>
-            </article>
-
-            <article className="location-property-card location-property-card-chateau" data-reveal style={{ '--reveal-delay': '100ms' }}>
-              <div className="location-property-media"><LocationImageSlider images={locationShowcase.chateau} title="Chateau Valenzuela photos" /></div>
-              <div className="location-property-copy">
-                <span>LINGUNAN · VALENZUELA CITY</span>
-                <h3>Chateau Valenzuela</h3>
-                <p>16 P. Gregorio Street, Brgy. Lingunan, Valenzuela City, 1446 Metro Manila</p>
-                <div className="location-tags"><b>5 J3C units</b><b>Pool</b><b>Basketball court</b><b>24-hr security</b></div>
-                <a href="#properties">View Chateau units <Arrow /></a>
-              </div>
-            </article>
-          </div>
+          <LocationsShowcase />
         </div>
       </section>
 
@@ -238,6 +189,41 @@ export default function Home() {
           <div className="about-note">
             <span>COMING 2027</span>
             <p>J3C plans to expand into Pampanga with residential house and apartment rentals in Cheerful Homes, Mabalacat and Amaia Scapes, Mexico.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="team-section section-pad" id="team">
+        <div className="section-container">
+          <div className="team-heading" data-reveal>
+            <div>
+              <p className="eyebrow"><span /> THE PEOPLE BEHIND J3C</p>
+              <h2>Meet the team<br /><em>behind every rental.</em></h2>
+            </div>
+            <p>From business direction to licensed property assistance and day-to-day tenant support, J3C keeps each rental experience personally managed.</p>
+          </div>
+
+          <div className="team-grid">
+            <article className="team-card" data-reveal>
+              <div className="team-card-mark" aria-hidden="true">NT</div>
+              <span>FOUNDER / DIRECTOR</span>
+              <h3>Nathaniel Alexander Torres</h3>
+              <p>Business direction, rental portfolio oversight, and long-term growth of J3C Rental Properties.</p>
+            </article>
+
+            <article className="team-card" data-reveal style={{ '--reveal-delay': '90ms' }}>
+              <div className="team-card-mark" aria-hidden="true">LP</div>
+              <span>LICENSED PROFESSIONALS</span>
+              <h3>Accredited Brokers &amp; Agents</h3>
+              <p>Professional assistance for leasing coordination, property transactions, and renter guidance when required.</p>
+            </article>
+
+            <article className="team-card team-card-management" data-reveal style={{ '--reveal-delay': '180ms' }}>
+              <div className="team-card-mark" aria-hidden="true">PM</div>
+              <span>PROPERTY MANAGEMENT TEAM</span>
+              <h3>Led by Josephine De Guia</h3>
+              <p>Hands-on property operations, tenant coordination, viewing support, and day-to-day rental management.</p>
+            </article>
           </div>
         </div>
       </section>
@@ -323,13 +309,7 @@ export default function Home() {
               <div className="info-card-number">05</div>
               <div className="info-card-kicker">Locations / How to Get There</div>
               <h3>J3C Property Areas</h3>
-              <ul className="area-list">
-                <li><strong>Manila</strong><span>Avida Towers San Lazaro · Sta. Cruz</span></li>
-                <li><strong>Valenzuela</strong><span>Chateau Valenzuela · Fini Homes</span></li>
-                <li><strong>Taguig</strong><span>Pacific Residences</span></li>
-                <li><strong>Alabang</strong><span>Avida Towers Altura · Muntinlupa</span></li>
-                <li><strong>Pampanga · 2027</strong><span>Cheerful Homes · Mabalacat & Amaia Scapes · Mexico</span></li>
-              </ul>
+              <DatabaseLocationList />
               <a className="info-card-link" href="#locations">View featured property locations <Arrow /></a>
             </article>
           </div>
@@ -394,7 +374,7 @@ export default function Home() {
             <span className="brand-copy"><strong>J3C Rental Properties</strong><small>Condominium Unit Rental</small></span>
           </a>
           <p>J3C Rental Properties · Serving renters since 2018</p>
-          <div className="footer-links"><a href="#properties">Available Units</a><a href="#about">About</a><a href="#guidelines">FAQs & Guidelines</a><a href="#contact">Contact</a></div>
+          <div className="footer-links"><a href="#about">About Us</a><a href="#properties">Available Units</a><a href="#guidelines">FAQs & Guidelines</a><a href="#contact">Contact</a></div>
         </div>
       </footer>
     </main>
