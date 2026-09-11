@@ -26,19 +26,17 @@ export default function DatabaseLocationList() {
   }, [])
 
   const locations = useMemo(() => {
-    const seen = new Set()
-    const rows = []
+    const groups = new Map()
     for (const property of properties) {
+      const location = String(property.location || property.full_address || 'Location available on inquiry').trim()
       const development = String(property.development_name || property.name || 'J3C Rental Property').trim()
-      const key = development.toLowerCase()
-      if (seen.has(key)) continue
-      seen.add(key)
-      rows.push({
-        development,
-        location: property.full_address || property.location || 'Location available on inquiry',
-      })
+      const key = location.toLowerCase()
+      if (!groups.has(key)) groups.set(key, { location, developments: new Set() })
+      groups.get(key).developments.add(development)
     }
-    return rows
+    return [...groups.values()]
+      .map((item) => ({ ...item, developments: [...item.developments].sort() }))
+      .sort((a, b) => a.location.localeCompare(b.location))
   }, [properties])
 
   if (loading) return <p className="database-location-note">Loading live property areas…</p>
@@ -48,9 +46,9 @@ export default function DatabaseLocationList() {
   return (
     <ul className="area-list">
       {locations.map((item) => (
-        <li key={item.development}>
-          <strong>{item.development}</strong>
-          <span>{item.location}</span>
+        <li key={item.location}>
+          <strong>{item.location}</strong>
+          <span>{item.developments.join(' · ')}</span>
         </li>
       ))}
     </ul>

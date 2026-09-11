@@ -1672,3 +1672,55 @@ body{overflow-x:clip}
   .team-heading{grid-template-columns:1fr;gap:18px}.team-grid{grid-template-columns:1fr}.team-card{min-height:0}.team-card-mark{margin-bottom:28px}
 }
 .database-location-note{margin:0 0 18px!important;color:#737b87!important;font-size:11px!important;line-height:1.7}
+
+/* Inquiry / contact flow: inquiry form first, direct contact second */
+#inquiry-form,#contact{scroll-margin-top:92px}
+.inquiry-section>p:not(.eyebrow),.direct-contact-block>p:not(.eyebrow){max-width:560px;color:#b5bfcd;font-size:14px;line-height:1.75}
+.direct-contact-block{margin-top:56px;padding-top:42px;border-top:1px solid rgba(255,255,255,.13)}
+.direct-contact-block h3{margin:7px 0 10px;font-family:"Iowan Old Style",Baskerville,serif;font-size:clamp(31px,3vw,46px);font-weight:500;line-height:1.05;color:#fff}
+.direct-contact-block .contact-channels{margin-top:22px}
+.management-office-card{margin-top:24px;padding:22px;border:1px solid rgba(255,255,255,.13);border-radius:16px;background:rgba(255,255,255,.045)}
+.office-card-heading{display:flex;flex-direction:column;gap:5px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.office-card-heading span{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.15em;color:var(--gold-2)}
+.office-card-heading strong{font-family:"Iowan Old Style",Baskerville,serif;font-size:20px;font-weight:600;color:#fff}
+.management-team-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:18px 0}
+.management-team-list>div{display:flex;flex-direction:column;gap:4px;padding:12px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(255,255,255,.025)}
+.management-team-list b{font-size:11px;font-weight:650;line-height:1.35;color:#f3f5f8}
+.management-team-list small{font-size:8px;line-height:1.45;text-transform:uppercase;letter-spacing:.07em;color:#8f9bad}
+.office-contact-details{display:grid;gap:10px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1)}
+.office-contact-details p{margin:0;display:grid;grid-template-columns:74px 1fr;gap:10px;align-items:start}
+.office-contact-details span{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#8f9bad}
+.office-contact-details strong,.office-contact-details a{font-size:11px;font-weight:500;line-height:1.55;color:#e7ebf1}
+.office-contact-details a:hover{color:var(--gold-2)}
+
+@media (max-width:900px){
+  #inquiry-form,#contact{scroll-margin-top:82px}
+  .direct-contact-block{margin-top:46px;padding-top:34px}
+  .management-team-list{grid-template-columns:1fr}
+}
+
+@media (max-width:600px){
+  #inquiry-form,#contact{scroll-margin-top:76px}
+  .management-office-card{padding:17px}
+  .office-contact-details p{grid-template-columns:1fr;gap:4px}
+}
+
+/* ===== Location -> development navigation (database driven) ===== */
+.desktop-location-nav{position:relative;display:flex;align-items:stretch;align-self:stretch}
+.desktop-location-nav-trigger{display:flex;align-items:center;height:100%}
+.desktop-location-nav-panel{position:absolute;z-index:95;left:50%;top:66px;width:330px;max-height:min(520px,70vh);overflow:auto;transform:translate(-50%,8px);padding:10px;border:1px solid rgba(8,23,47,.1);border-radius:16px;background:rgba(255,255,255,.98);box-shadow:0 24px 60px rgba(8,23,47,.18);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,transform .2s ease,visibility .2s ease}
+.desktop-location-nav:hover .desktop-location-nav-panel,.desktop-location-nav:focus-within .desktop-location-nav-panel{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0)}
+.desktop-nav .desktop-location-nav-panel a{display:block;padding:0}
+.desktop-nav .desktop-location-nav-panel a:after{display:none}
+.desktop-location-nav-group{padding:10px;border-radius:11px}
+.desktop-location-nav-group+.desktop-location-nav-group{border-top:1px solid #ece8df}
+.desktop-location-heading{color:#9a742e!important;font-size:9px!important;font-weight:900!important;letter-spacing:.08em;text-transform:uppercase}
+.desktop-location-developments{display:grid;gap:2px;margin-top:5px}
+.desktop-location-developments a{padding:7px 8px!important;border-radius:8px;color:#26354c!important;font-size:12px!important;font-weight:650!important}
+.desktop-location-developments a:hover,.desktop-location-developments a:focus{background:#f5f1e8;color:#08172f!important;outline:none}
+
+.location-property-card{scroll-margin-top:96px}
+@media(max-width:1080px){.desktop-location-nav-panel{display:none}}
+@media(max-width:700px){
+  .location-property-card{scroll-margin-top:82px}
+}

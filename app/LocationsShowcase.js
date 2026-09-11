@@ -32,6 +32,13 @@ function parseAmenities(value) {
   return String(value).split(',').map((item) => item.trim()).filter(Boolean)
 }
 
+function slugify(value) {
+  return String(value || 'location')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'location'
+}
+
 function Arrow() {
   return <span aria-hidden="true">↗</span>
 }
@@ -63,41 +70,63 @@ export default function LocationsShowcase() {
     return () => window.removeEventListener('focus', refreshOnFocus)
   }, [])
 
-  const communities = useMemo(() => {
-    const groups = new Map()
+  const developments = useMemo(() => {
+    const grouped = new Map()
 
     for (const property of properties) {
-      const name = String(property.development_name || property.location || 'J3C Rental Property').trim()
-      if (!groups.has(name)) groups.set(name, [])
-      groups.get(name).push(property)
+      const location = String(property.location || property.full_address || 'J3C Rental Location').trim()
+      const developmentName = String(property.development_name || property.name || 'J3C Rental Property').trim()
+      const key = `${location.toLowerCase()}::${developmentName.toLowerCase()}`
+
+      if (!grouped.has(key)) {
+        grouped.set(key, { location, name: developmentName, units: [] })
+      }
+      grouped.get(key).units.push(property)
     }
 
-    return [...groups.entries()].map(([name, units]) => {
-      const location = units.find((unit) => unit.location)?.location || ''
-      const address = units.find((unit) => unit.full_address)?.full_address || location
-      const mapUrl = units.find((unit) => unit.map_url)?.map_url || ''
-      const unitImages = units
-        .flatMap((unit) => unit.images || [])
-        .filter((image) => image?.image_url)
-        .slice(0, 6)
-        .map((image, index) => ({
-          src: image.image_url,
-          label: image.alt_text || `${name} photo ${index + 1}`,
-          alt: image.alt_text || `${name} property photo`,
-        }))
-      const images = communityImages[name] || unitImages
-      const amenities = [...new Set(units.flatMap((unit) => parseAmenities(unit.amenities)))].slice(0, 4)
+    return [...grouped.values()]
+      .map((group) => {
+        const { location, name, units } = group
+        const address = units.find((unit) => unit.full_address)?.full_address || location
+        const mapUrl = units.find((unit) => unit.map_url)?.map_url || ''
+        const managedLocationImages = (units.find((unit) => Array.isArray(unit.development_images) && unit.development_images.length)?.development_images || [])
+          .filter((image) => image?.image_url)
+          .slice(0, 8)
+          .map((image, index) => ({
+            src: image.image_url,
+            label: image.alt_text || `${name} location photo ${index + 1}`,
+            alt: image.alt_text || `${name} location photo`,
+          }))
+        const unitImages = units
+          .flatMap((unit) => unit.images || [])
+          .filter((image) => image?.image_url)
+          .slice(0, 6)
+          .map((image, index) => ({
+            src: image.image_url,
+            label: image.alt_text || `${name} photo ${index + 1}`,
+            alt: image.alt_text || `${name} property photo`,
+          }))
+        const images = managedLocationImages.length
+          ? managedLocationImages
+          : unitImages.length
+            ? unitImages
+            : (communityImages[name] || [])
+        const amenities = [...new Set(units.flatMap((unit) => parseAmenities(unit.amenities)))].slice(0, 4)
 
-      return {
-        name,
-        location,
-        address,
-        mapUrl,
-        units,
-        images: images.length ? images : [{ src: '/hero-building.svg', label: name, alt: `${name} property illustration` }],
-        amenities,
-      }
-    })
+        return {
+          location,
+          name,
+          address,
+          mapUrl,
+          units,
+          images: images.length ? images : [{ src: '/hero-building.svg', label: name, alt: `${name} property illustration` }],
+          amenities,
+        }
+      })
+      .sort((a, b) => {
+        const locationCompare = a.location.localeCompare(b.location)
+        return locationCompare || a.name.localeCompare(b.name)
+      })
   }, [properties])
 
   if (loading) {
@@ -117,32 +146,33 @@ export default function LocationsShowcase() {
     )
   }
 
-  if (!communities.length) {
+  if (!developments.length) {
     return <div className="location-live-state">No property locations are listed in the database yet.</div>
   }
 
   return (
     <div className="location-showcase-grid">
-      {communities.map((community, index) => (
+      {developments.map((development, index) => (
         <article
           className="location-property-card is-visible"
           data-reveal
+          id={`location-${slugify(development.location)}-${slugify(development.name)}`}
           style={{ '--reveal-delay': `${Math.min(index, 5) * 80}ms` }}
-          key={community.name}
+          key={`${development.location}::${development.name}`}
         >
           <div className="location-property-media">
-            <LocationImageSlider images={community.images} title={`${community.name} photos`} />
+            <LocationImageSlider images={development.images} title={`${development.name} photos`} />
           </div>
           <div className="location-property-copy">
-            <span>{community.location ? community.location.toUpperCase() : 'LIVE DATABASE LOCATION'}</span>
-            <h3>{community.name}</h3>
-            <p>{community.address}</p>
+            <span>{development.location.toUpperCase()}</span>
+            <h3>{development.name}</h3>
+            <p>{development.address}</p>
             <div className="location-tags">
-              <b>{community.units.length} {community.units.length === 1 ? 'J3C unit' : 'J3C units'}</b>
-              {community.amenities.map((amenity) => <b key={amenity}>{amenity}</b>)}
+              <b>{development.units.length} {development.units.length === 1 ? 'J3C unit' : 'J3C units'}</b>
+              {development.amenities.map((amenity) => <b key={amenity}>{amenity}</b>)}
             </div>
-            {community.mapUrl ? (
-              <a href={community.mapUrl} target="_blank" rel="noreferrer">Open location <Arrow /></a>
+            {development.mapUrl ? (
+              <a href={development.mapUrl} target="_blank" rel="noreferrer">Open location <Arrow /></a>
             ) : (
               <a href="#properties">View available units <Arrow /></a>
             )}

@@ -193,7 +193,7 @@ export default function PublicProperties() {
   function inquire(property) {
     setActiveProperty(null)
     window.dispatchEvent(new CustomEvent('j3c:inquiry-property', { detail: { property: `${getDevelopmentName(property)} — ${property.name}` } }))
-    window.setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 80)
+    window.setTimeout(() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' }), 80)
   }
 
   if (loading) {

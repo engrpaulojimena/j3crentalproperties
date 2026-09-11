@@ -150,6 +150,7 @@ function normalizeProperty(property) {
     slug: property.slug || '',
     is_featured: Number(property.is_featured || 0),
     images: Array.isArray(property.images) ? property.images : [],
+    development_images: Array.isArray(property.development_images) ? property.development_images : [],
   }
 }
 
@@ -165,6 +166,9 @@ export default function AdminDashboardClient() {
   const [form, setForm] = useState(emptyForm)
   const [selectedFiles, setSelectedFiles] = useState([])
   const [saving, setSaving] = useState(false)
+  const [activeSection, setActiveSection] = useState('units')
+  const [locationPhotoBusy, setLocationPhotoBusy] = useState('')
+  const [activeLookup, setActiveLookup] = useState('')
 
   useEffect(() => {
     if (sessionStorage.getItem('j3c-admin-preview') !== 'active') {
@@ -228,6 +232,64 @@ export default function AdminDashboardClient() {
     return [...seen.values()].sort((a, b) => a.localeCompare(b))
   }, [units])
 
+  const developmentOptionsForForm = useMemo(() => {
+    const selectedLocationKey = normalizeLookupKey(form.location)
+    if (!selectedLocationKey) return developmentOptions
+
+    const matched = []
+    const matchedKeys = new Set()
+
+    for (const unit of units) {
+      if (normalizeLookupKey(unit.location) !== selectedLocationKey) continue
+      const development = cleanLookupValue(unit.development_name)
+      const key = normalizeLookupKey(development)
+      if (development && key && !matchedKeys.has(key)) {
+        matchedKeys.add(key)
+        matched.push(development)
+      }
+    }
+
+    return matched.length ? matched.sort((a, b) => a.localeCompare(b)) : developmentOptions
+  }, [developmentOptions, form.location, units])
+
+  const developmentsAtSelectedLocation = useMemo(() => {
+    const selectedLocationKey = normalizeLookupKey(form.location)
+    if (!selectedLocationKey) return []
+    const seen = new Map()
+    for (const unit of units) {
+      if (normalizeLookupKey(unit.location) !== selectedLocationKey) continue
+      const development = cleanLookupValue(unit.development_name)
+      const key = normalizeLookupKey(development)
+      if (development && key && !seen.has(key)) seen.set(key, development)
+    }
+    return [...seen.values()].sort((a, b) => a.localeCompare(b))
+  }, [form.location, units])
+
+
+  const developmentGroups = useMemo(() => {
+    const groups = new Map()
+    for (const unit of units) {
+      const name = cleanLookupValue(unit.development_name || unit.location || 'J3C Rental Property')
+      if (!groups.has(name)) {
+        groups.set(name, {
+          name,
+          location: unit.location || '',
+          full_address: unit.full_address || '',
+          units: [],
+          images: Array.isArray(unit.development_images) ? unit.development_images : [],
+        })
+      }
+      const group = groups.get(name)
+      group.units.push(unit)
+      if (!group.location && unit.location) group.location = unit.location
+      if (!group.full_address && unit.full_address) group.full_address = unit.full_address
+      if ((!group.images || group.images.length === 0) && Array.isArray(unit.development_images) && unit.development_images.length) {
+        group.images = unit.development_images
+      }
+    }
+    return [...groups.values()].sort((a, b) => a.name.localeCompare(b.name))
+  }, [units])
+
   function logout() {
     sessionStorage.removeItem('j3c-admin-preview')
     sessionStorage.removeItem('j3c-admin-email')
@@ -239,6 +301,7 @@ export default function AdminDashboardClient() {
     setForm(emptyForm)
     setSelectedFiles([])
     setStatusMessage('')
+    setActiveLookup('')
     setModalOpen(true)
   }
 
@@ -270,6 +333,7 @@ export default function AdminDashboardClient() {
     })
     setSelectedFiles([])
     setStatusMessage('')
+    setActiveLookup('')
     setModalOpen(true)
   }
 
@@ -278,6 +342,16 @@ export default function AdminDashboardClient() {
     setEditingId(null)
     setForm(emptyForm)
     setSelectedFiles([])
+    setActiveLookup('')
+  }
+
+  function selectLookupValue(name, value) {
+    setForm((current) => ({ ...current, [name]: value }))
+    setActiveLookup('')
+  }
+
+  function handleLookupBlur(event) {
+    if (!event.currentTarget.contains(event.relatedTarget)) setActiveLookup('')
   }
 
   function handleChange(event) {
@@ -285,18 +359,11 @@ export default function AdminDashboardClient() {
     setForm((current) => ({ ...current, [name]: value }))
   }
 
-  function handleLookupBlur(name, options) {
-    setForm((current) => ({
-      ...current,
-      [name]: canonicalizeLookup(current[name], options),
-    }))
-  }
-
   function handleFiles(event) {
     setSelectedFiles(Array.from(event.target.files || []))
   }
 
-  async function uploadOneImage(file, propertyId, isCover) {
+  async function uploadCloudinaryFile(file) {
     const signResponse = await fetch('/api/cloudinary/sign', { method: 'POST' })
     const signData = await signResponse.json()
     if (!signResponse.ok) throw new Error('Cloudinary is not configured yet.')
@@ -314,6 +381,11 @@ export default function AdminDashboardClient() {
     })
     const cloudData = await cloudResponse.json()
     if (!cloudResponse.ok) throw new Error(cloudData.error?.message || 'Image upload failed.')
+    return cloudData
+  }
+
+  async function uploadOneImage(file, propertyId, isCover) {
+    const cloudData = await uploadCloudinaryFile(file)
 
     const saveResponse = await fetch(`/api/properties/${propertyId}/images`, {
       method: 'POST',
@@ -328,6 +400,59 @@ export default function AdminDashboardClient() {
     })
     const saveData = await saveResponse.json()
     if (!saveResponse.ok) throw new Error(saveData.error || 'Could not save image record.')
+  }
+
+  async function uploadDevelopmentPhotos(developmentName, files, existingImages = []) {
+    const chosen = Array.from(files || [])
+    if (!chosen.length || backendMode !== 'cloud') return
+
+    setLocationPhotoBusy(developmentName)
+    setStatusMessage('')
+    try {
+      for (let index = 0; index < chosen.length; index += 1) {
+        const cloudData = await uploadCloudinaryFile(chosen[index])
+        const saveResponse = await fetch('/api/development-images', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            development_name: developmentName,
+            image_key: cloudData.public_id,
+            image_url: cloudData.secure_url,
+            alt_text: `${developmentName} location photo`,
+            sort_order: existingImages.length + index,
+            is_cover: existingImages.length === 0 && index === 0,
+          }),
+        })
+        const saveData = await saveResponse.json()
+        if (!saveResponse.ok) throw new Error(saveData.error || 'Could not save location photo.')
+      }
+      await loadUnits()
+      setStatusMessage(`${developmentName} location photos updated.`)
+    } catch (error) {
+      setStatusMessage(error.message || 'Location photo upload failed.')
+    } finally {
+      setLocationPhotoBusy('')
+    }
+  }
+
+  async function deleteDevelopmentImage(imageId, developmentName) {
+    if (backendMode !== 'cloud') return
+    const ok = window.confirm(`Remove this ${developmentName} location photo?`)
+    if (!ok) return
+
+    setLocationPhotoBusy(developmentName)
+    setStatusMessage('')
+    try {
+      const response = await fetch(`/api/development-images/${imageId}`, { method: 'DELETE' })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Could not remove location photo.')
+      await loadUnits()
+      setStatusMessage(`${developmentName} location photo removed.`)
+    } catch (error) {
+      setStatusMessage(error.message || 'Location photo delete failed.')
+    } finally {
+      setLocationPhotoBusy('')
+    }
   }
 
   async function saveUnit(event) {
@@ -457,7 +582,8 @@ export default function AdminDashboardClient() {
         </div>
         <div className={styles.navLabel}>Management</div>
         <nav className={styles.nav} aria-label="Admin navigation">
-          <button className={styles.active} type="button"><span>▦</span>Units</button>
+          <button className={activeSection === 'units' ? styles.active : ''} type="button" onClick={() => setActiveSection('units')}><span>▦</span>Units</button>
+          <button className={activeSection === 'locations' ? styles.active : ''} type="button" onClick={() => setActiveSection('locations')}><span>▧</span>Location photos</button>
         </nav>
         <div className={styles.sidebarBottom}>
           <span>Signed in as</span><strong>{email}</strong><button onClick={logout}>Sign out</button>
@@ -468,10 +594,10 @@ export default function AdminDashboardClient() {
         <header className={styles.header}>
           <div>
             <p>OWNER / ADMIN</p>
-            <h1>Rental units</h1>
-            <span>Add, edit, delete, and upload property photos.</span>
+            <h1>{activeSection === 'units' ? 'Rental units' : 'Location photos'}</h1>
+            <span>{activeSection === 'units' ? 'Add, edit, delete, and upload unit photos.' : 'Manage the photos shown on each property/location card on the public website.'}</span>
           </div>
-          <button className={styles.addButton} onClick={openAdd}>+ Add unit</button>
+          {activeSection === 'units' && <button className={styles.addButton} onClick={openAdd}>+ Add unit</button>}
         </header>
 
         <div className={`${styles.backendBadge} ${backendMode === 'cloud' ? styles.backendCloud : styles.backendDemo}`}>
@@ -481,52 +607,114 @@ export default function AdminDashboardClient() {
 
         {statusMessage && <div className={styles.errorBanner}>{statusMessage}</div>}
 
-        <section className={styles.stats} aria-label="Unit summary">
-          <article><span>Total units</span><strong>{stats.total}</strong></article>
-          <article><span>Available</span><strong>{stats.available}</strong></article>
-          <article><span>Occupied</span><strong>{stats.occupied}</strong></article>
-        </section>
+        {activeSection === 'units' ? (
+          <>
+            <section className={styles.stats} aria-label="Unit summary">
+              <article><span>Total units</span><strong>{stats.total}</strong></article>
+              <article><span>Available</span><strong>{stats.available}</strong></article>
+              <article><span>Occupied</span><strong>{stats.occupied}</strong></article>
+            </section>
 
-        <section className={styles.panel}>
-          <div className={styles.panelHead}>
-            <div><p>PROPERTY LIST</p><h2>Manage units</h2></div>
-            <span>{units.length} {units.length === 1 ? 'unit' : 'units'}</span>
-          </div>
+            <section className={styles.panel}>
+              <div className={styles.panelHead}>
+                <div><p>PROPERTY LIST</p><h2>Manage units</h2></div>
+                <span>{units.length} {units.length === 1 ? 'unit' : 'units'}</span>
+              </div>
 
-          {units.length === 0 ? (
-            <div className={styles.emptyState}>
-              <div>＋</div><h3>No units yet</h3><p>Add the first rental unit to start building the property list.</p><button onClick={openAdd}>Add first unit</button>
+              {units.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <div>＋</div><h3>No units yet</h3><p>Add the first rental unit to start building the property list.</p><button onClick={openAdd}>Add first unit</button>
+                </div>
+              ) : (
+                <div className={styles.unitList}>
+                  {units.map((unit) => {
+                    const cover = unit.images?.find((image) => image.is_cover) || unit.images?.[0]
+                    return (
+                      <article className={styles.unitCard} key={unit.id}>
+                        <div className={styles.thumb}>
+                          <img src={cover?.image_url || fallbackImage(unit)} alt={unit.name} />
+                          {!cover && <span>No uploaded photo yet</span>}
+                        </div>
+                        <div className={styles.unitInfo}>
+                          <div className={styles.unitTopLine}>
+                            <h3>{unit.name}</h3>
+                            <span className={unit.status === 'Occupied' ? styles.occupied : unit.status === 'Available Soon' ? styles.soon : styles.available}>{unit.status}</span>
+                          </div>
+                          <p>{unit.development_name ? `${unit.development_name} • ` : ''}{unit.location}{unit.available_on ? ` • ${unit.status === 'Occupied' ? 'Available ' : unit.status === 'Available Soon' ? 'Available ' : ''}${unit.available_on}` : ''}</p>
+                          <strong>{formatPeso(unit.rate)} <small>/ month</small></strong>
+                          {unit.description && <small className={styles.description}>{unit.description}</small>}
+                          {unit.images?.length > 0 && <small className={styles.photoCount}>{unit.images.length} photo{unit.images.length > 1 ? 's' : ''}</small>}
+                        </div>
+                        <div className={styles.rowActions}>
+                          <button type="button" onClick={() => openEdit(unit)}>Edit</button>
+                          <button type="button" className={styles.deleteButton} onClick={() => deleteUnit(unit)}>Delete</button>
+                        </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              )}
+            </section>
+          </>
+        ) : (
+          <section className={styles.panel}>
+            <div className={styles.panelHead}>
+              <div><p>PUBLIC LOCATION GALLERIES</p><h2>Manage location photos</h2></div>
+              <span>{developmentGroups.length} {developmentGroups.length === 1 ? 'location' : 'locations'}</span>
             </div>
-          ) : (
-            <div className={styles.unitList}>
-              {units.map((unit) => {
-                const cover = unit.images?.find((image) => image.is_cover) || unit.images?.[0]
+
+            <div className={styles.locationPhotoList}>
+              {developmentGroups.map((group) => {
+                const isBusy = locationPhotoBusy === group.name
+                const fallback = fallbackImage(group.units[0])
                 return (
-                  <article className={styles.unitCard} key={unit.id}>
-                    <div className={styles.thumb}>
-                      <img src={cover?.image_url || fallbackImage(unit)} alt={unit.name} />
-                      {!cover && <span>No uploaded photo yet</span>}
-                    </div>
-                    <div className={styles.unitInfo}>
-                      <div className={styles.unitTopLine}>
-                        <h3>{unit.name}</h3>
-                        <span className={unit.status === 'Occupied' ? styles.occupied : unit.status === 'Available Soon' ? styles.soon : styles.available}>{unit.status}</span>
+                  <article className={styles.locationPhotoCard} key={group.name}>
+                    <div className={styles.locationPhotoHead}>
+                      <div>
+                        <p>{group.location || 'Property location'}</p>
+                        <h3>{group.name}</h3>
+                        {group.full_address && <span>{group.full_address}</span>}
                       </div>
-                      <p>{unit.development_name ? `${unit.development_name} • ` : ''}{unit.location}{unit.available_on ? ` • ${unit.status === 'Occupied' ? 'Available ' : unit.status === 'Available Soon' ? 'Available ' : ''}${unit.available_on}` : ''}</p>
-                      <strong>{formatPeso(unit.rate)} <small>/ month</small></strong>
-                      {unit.description && <small className={styles.description}>{unit.description}</small>}
-                      {unit.images?.length > 0 && <small className={styles.photoCount}>{unit.images.length} photo{unit.images.length > 1 ? 's' : ''}</small>}
+                      <label className={`${styles.locationUploadButton} ${isBusy ? styles.busyButton : ''}`}>
+                        {isBusy ? 'Uploading…' : '+ Add photos'}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          disabled={backendMode !== 'cloud' || isBusy}
+                          onChange={(event) => {
+                            uploadDevelopmentPhotos(group.name, event.target.files, group.images || [])
+                            event.target.value = ''
+                          }}
+                        />
+                      </label>
                     </div>
-                    <div className={styles.rowActions}>
-                      <button type="button" onClick={() => openEdit(unit)}>Edit</button>
-                      <button type="button" className={styles.deleteButton} onClick={() => deleteUnit(unit)}>Delete</button>
-                    </div>
+
+                    {group.images?.length ? (
+                      <div className={styles.locationPhotoGrid}>
+                        {group.images.map((image, index) => (
+                          <figure key={image.id}>
+                            <img src={image.image_url} alt={image.alt_text || `${group.name} location photo`} />
+                            <figcaption>{image.is_cover ? 'Cover photo' : `Photo ${index + 1}`}</figcaption>
+                            <button type="button" aria-label="Remove photo" disabled={isBusy} onClick={() => deleteDevelopmentImage(image.id, group.name)}>×</button>
+                          </figure>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className={styles.locationFallback}>
+                        <img src={fallback} alt={`${group.name} current fallback`} />
+                        <div>
+                          <strong>Using automatic fallback photos</strong>
+                          <span>Upload photos here to replace the pictures shown on the public {group.name} location card. These are separate from individual unit photos.</span>
+                        </div>
+                      </div>
+                    )}
                   </article>
                 )
               })}
             </div>
-          )}
-        </section>
+          </section>
+        )}
       </section>
 
       {modalOpen && (
@@ -541,22 +729,36 @@ export default function AdminDashboardClient() {
 
             <form className={styles.form} onSubmit={saveUnit}>
               <div className={styles.formGrid}>
-                <label>
-                  <span className={styles.labelRow}><span>Development / property</span><small>Select existing or type a new one</small></span>
-                  <input
-                    name="development_name"
-                    list="j3c-development-options"
-                    value={form.development_name}
-                    onChange={handleChange}
-                    onBlur={() => handleLookupBlur('development_name', developmentOptions)}
-                    placeholder="Search or type property name"
-                    autoComplete="off"
-                    required
-                  />
-                  <datalist id="j3c-development-options">
-                    {developmentOptions.map((option) => <option value={option} key={option} />)}
-                  </datalist>
-                </label>
+                <div className={styles.lookupField} onBlur={handleLookupBlur}>
+                  <span className={styles.labelRow}><span>Development / property</span><small>{developmentsAtSelectedLocation.length ? `${developmentsAtSelectedLocation.length} existing at this location` : 'Select existing or type a new one'}</small></span>
+                  <div className={styles.lookupControl}>
+                    <input
+                      name="development_name"
+                      value={form.development_name}
+                      onChange={handleChange}
+                      onFocus={() => setActiveLookup('development_name')}
+                      placeholder="Search or type property name"
+                      autoComplete="off"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className={styles.lookupToggle}
+                      onClick={() => setActiveLookup((current) => current === 'development_name' ? '' : 'development_name')}
+                      aria-label="Show existing properties"
+                      aria-expanded={activeLookup === 'development_name'}
+                    >⌄</button>
+                    {activeLookup === 'development_name' && developmentOptionsForForm.length > 0 && (
+                      <div className={styles.lookupMenu}>
+                        {developmentOptionsForForm.map((option) => (
+                          <button type="button" key={option} onMouseDown={(event) => event.preventDefault()} onClick={() => selectLookupValue('development_name', option)}>
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <label>Unit no.<input name="unit_code" value={form.unit_code} onChange={handleChange} placeholder="e.g. 1 or 306" /></label>
               </div>
               <div className={styles.formGrid}>
@@ -565,22 +767,36 @@ export default function AdminDashboardClient() {
               </div>
               <label>Unit name<input name="name" value={form.name} onChange={handleChange} placeholder="e.g. 2 Bedroom Unit - 3rd Floor" required /></label>
               <div className={styles.formGrid}>
-                <label>
+                <div className={styles.lookupField} onBlur={handleLookupBlur}>
                   <span className={styles.labelRow}><span>Location</span><small>Select existing or type a new one</small></span>
-                  <input
-                    name="location"
-                    list="j3c-location-options"
-                    value={form.location}
-                    onChange={handleChange}
-                    onBlur={() => handleLookupBlur('location', locationOptions)}
-                    placeholder="Search or type a new location"
-                    autoComplete="off"
-                    required
-                  />
-                  <datalist id="j3c-location-options">
-                    {locationOptions.map((option) => <option value={option} key={option} />)}
-                  </datalist>
-                </label>
+                  <div className={styles.lookupControl}>
+                    <input
+                      name="location"
+                      value={form.location}
+                      onChange={handleChange}
+                      onFocus={() => setActiveLookup('location')}
+                      placeholder="Search or type a new location"
+                      autoComplete="off"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className={styles.lookupToggle}
+                      onClick={() => setActiveLookup((current) => current === 'location' ? '' : 'location')}
+                      aria-label="Show existing locations"
+                      aria-expanded={activeLookup === 'location'}
+                    >⌄</button>
+                    {activeLookup === 'location' && locationOptions.length > 0 && (
+                      <div className={styles.lookupMenu}>
+                        {locationOptions.map((option) => (
+                          <button type="button" key={option} onMouseDown={(event) => event.preventDefault()} onClick={() => selectLookupValue('location', option)}>
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <label>Property type<input name="property_type" value={form.property_type} onChange={handleChange} placeholder="Condominium" /></label>
               </div>
               <label>Full address<input name="full_address" value={form.full_address} onChange={handleChange} placeholder="Complete property address" /></label>

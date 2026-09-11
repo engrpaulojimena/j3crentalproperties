@@ -4,6 +4,7 @@ import MotionObserver from './MotionObserver'
 import PublicProperties from './PublicProperties'
 import LocationsShowcase from './LocationsShowcase'
 import MobileMenu from './MobileMenu'
+import LocationsNavMenu from './LocationsNavMenu'
 import DatabaseLocationList from './DatabaseLocationList'
 import HeroBackgroundSlider from './HeroBackgroundSlider'
 
@@ -47,14 +48,14 @@ export default function Home() {
 
           <nav className="desktop-nav" aria-label="Primary navigation">
             <a href="#about">About Us</a>
-            <a href="#locations">Locations</a>
+            <LocationsNavMenu />
             <a href="#properties">Available Units</a>
             <a href="#gallery">Gallery</a>
             <a href="#guidelines">FAQs & Guidelines</a>
             <a href="#contact">Contact</a>
           </nav>
 
-          <a className="btn btn-navy desktop-cta" href="#contact">Inquire Now</a>
+          <a className="btn btn-navy desktop-cta" href="#inquiry-form">Inquire Now</a>
 
           <MobileMenu />
         </div>
@@ -72,7 +73,7 @@ export default function Home() {
             <p className="hero-lead">Explore J3C rental properties through real property photos, clear rental information, and a direct inquiry experience designed to make finding your next home simpler.</p>
             <div className="hero-actions">
               <a className="btn btn-gold" href="#properties">Browse Available Units <Arrow /></a>
-              <a className="btn btn-glass" href="#contact">Inquire Now</a>
+              <a className="btn btn-glass" href="#inquiry-form">Inquire Now</a>
             </div>
           </div>
 
@@ -316,7 +317,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="contact" id="contact">
+      <section className="contact">
         <div className="contact-image">
           <img src="/photos/fini-building.jpg" alt="Fini Homes Condominium exterior" />
           <div className="contact-overlay" />
@@ -328,41 +329,60 @@ export default function Home() {
         </div>
 
         <div className="contact-panel" data-reveal>
-          <p className="eyebrow eyebrow-light"><span /> INQUIRE NOW / CONTACT US</p>
-          <h2>Start with<br />a simple inquiry.</h2>
-          <p>Choose your preferred contact channel or leave your name, number, and question through the inquiry form below.</p>
-
-          <div className="contact-channels" aria-label="Direct contact options">
-            <a href="viber://chat?number=%2B639473068528" className="contact-channel channel-viber" aria-label="Contact J3C through Viber">
-              <span className="channel-brand-icon" aria-hidden="true">
-                <img src="https://cdn.simpleicons.org/viber/7360F2" alt="" />
-              </span>
-              <span><strong>Viber</strong><small>+63 947 306 8528</small></span>
-              <Arrow />
-            </a>
-            <a href="https://wa.me/639473068528" target="_blank" rel="noreferrer" className="contact-channel channel-whatsapp" aria-label="Contact J3C through WhatsApp">
-              <span className="channel-brand-icon" aria-hidden="true">
-                <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="" />
-              </span>
-              <span><strong>WhatsApp</strong><small>+63 947 306 8528</small></span>
-              <Arrow />
-            </a>
-            <a href="#inquiry-form" className="contact-channel channel-messenger" aria-label="Contact J3C through Messenger">
-              <span className="channel-brand-icon" aria-hidden="true">
-                <img src="https://cdn.simpleicons.org/messenger/00B2FF" alt="" />
-              </span>
-              <span><strong>Messenger</strong><small>Use the inquiry form for now</small></span>
-              <Arrow />
-            </a>
+          <div className="inquiry-section">
+            <p className="eyebrow eyebrow-light"><span /> INQUIRE NOW</p>
+            <h2>Start with<br />a simple inquiry.</h2>
+            <p>Leave your name, number, property of interest, and question. We&apos;ll use the details you provide to assist you more efficiently.</p>
+            <InquiryForm />
           </div>
 
-          <InquiryForm />
+          <div className="direct-contact-block" id="contact">
+            <p className="eyebrow eyebrow-light"><span /> CONTACT US</p>
+            <h3>Prefer to message us directly?</h3>
+            <p>Choose Viber, WhatsApp, or Messenger below. Our property management team can also assist with viewings, rental questions, and tenant coordination.</p>
 
-          <div className="office-line">
-            <span>Management Office</span>
-            <strong>306 Janina Bldg., P. Gregorio St., Brgy. Lingunan, Valenzuela City</strong>
-            <a href="tel:+639473068528">+63 947 306 8528</a>
-            <a href="mailto:j3crentalproperties@gmail.com">j3crentalproperties@gmail.com</a>
+            <div className="contact-channels" aria-label="Direct contact options">
+              <a href="viber://chat?number=%2B639473068528" className="contact-channel channel-viber" aria-label="Contact J3C through Viber">
+                <span className="channel-brand-icon" aria-hidden="true">
+                  <img src="https://cdn.simpleicons.org/viber/7360F2" alt="" />
+                </span>
+                <span><strong>Viber</strong><small>+63 947 306 8528</small></span>
+                <Arrow />
+              </a>
+              <a href="https://wa.me/639473068528" target="_blank" rel="noreferrer" className="contact-channel channel-whatsapp" aria-label="Contact J3C through WhatsApp">
+                <span className="channel-brand-icon" aria-hidden="true">
+                  <img src="https://cdn.simpleicons.org/whatsapp/25D366" alt="" />
+                </span>
+                <span><strong>WhatsApp</strong><small>+63 947 306 8528</small></span>
+                <Arrow />
+              </a>
+              <a href="#inquiry-form" className="contact-channel channel-messenger" aria-label="Contact J3C through Messenger">
+                <span className="channel-brand-icon" aria-hidden="true">
+                  <img src="https://cdn.simpleicons.org/messenger/00B2FF" alt="" />
+                </span>
+                <span><strong>Messenger</strong><small>Use the inquiry form for now</small></span>
+                <Arrow />
+              </a>
+            </div>
+
+            <div className="management-office-card">
+              <div className="office-card-heading">
+                <span>Management Office</span>
+                <strong>Property Management Team</strong>
+              </div>
+
+              <div className="management-team-list">
+                <div><b>Josephine L. de Guia</b><small>Property Manager</small></div>
+                <div><b>Froilan Jr. C. De Guia</b><small>Assistant Property Manager</small></div>
+                <div><b>Antonio Ichban</b><small>Maintenance &amp; Company Driver</small></div>
+              </div>
+
+              <div className="office-contact-details">
+                <p><span>Address</span><strong>Unit 7D, Tower 5, Avida Towers San Lazaro, Brgy. 350, Zone 35, Sta. Cruz, Manila, 1008</strong></p>
+                <p><span>Contact</span><a href="tel:+639473068528">+63 947 306 8528</a></p>
+                <p><span>Email</span><a href="mailto:j3crentalproperties@gmail.com">j3crentalproperties@gmail.com</a></p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

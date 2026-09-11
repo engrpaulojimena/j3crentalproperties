@@ -43,7 +43,6 @@ export default function MobileMenu() {
         {menuItems.map((item) => (
           <a key={item.href} href={item.href} onClick={closeMenu}>{item.label}</a>
         ))}
-        <a className="btn btn-gold" href="#contact" onClick={closeMenu}>Inquire Now</a>
       </div>
     </details>
   )

@@ -67,6 +67,48 @@ async function getImagesByProperty(env, propertyId) {
   return results
 }
 
+
+async function ensureDevelopmentImagesTable(env) {
+  await env.DB.prepare(
+    `CREATE TABLE IF NOT EXISTS development_images (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      development_name TEXT NOT NULL,
+      image_key TEXT NOT NULL,
+      image_url TEXT NOT NULL,
+      alt_text TEXT,
+      sort_order INTEGER DEFAULT 0,
+      is_cover INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )`
+  ).run()
+  await env.DB.prepare(
+    `CREATE INDEX IF NOT EXISTS idx_development_images_name
+     ON development_images(development_name)`
+  ).run()
+}
+
+async function getDevelopmentImages(env, developmentName) {
+  if (!developmentName) return []
+  await ensureDevelopmentImagesTable(env)
+  const { results = [] } = await env.DB.prepare(
+    `SELECT id, development_name, image_key, image_url, alt_text, sort_order, is_cover, created_at
+     FROM development_images
+     WHERE development_name = ?
+     ORDER BY is_cover DESC, sort_order ASC, id ASC`
+  ).bind(developmentName).all()
+  return results
+}
+
+async function listDevelopmentImages(env) {
+  await ensureDevelopmentImagesTable(env)
+  const { results = [] } = await env.DB.prepare(
+    `SELECT id, development_name, image_key, image_url, alt_text, sort_order, is_cover, created_at
+     FROM development_images
+     ORDER BY development_name ASC, is_cover DESC, sort_order ASC, id ASC`
+  ).all()
+  return results
+}
+
 async function listProperties(env) {
   const { results = [] } = await env.DB.prepare(
     `SELECT id, name, development_name, building_name, floor_label, location, full_address,
@@ -89,9 +131,17 @@ async function listProperties(env) {
     grouped.get(image.property_id).push(image)
   }
 
+  const developmentImages = await listDevelopmentImages(env)
+  const groupedDevelopmentImages = new Map()
+  for (const image of developmentImages) {
+    if (!groupedDevelopmentImages.has(image.development_name)) groupedDevelopmentImages.set(image.development_name, [])
+    groupedDevelopmentImages.get(image.development_name).push(image)
+  }
+
   return results.map((property) => ({
     ...property,
     images: grouped.get(property.id) || [],
+    development_images: groupedDevelopmentImages.get(property.development_name) || [],
   }))
 }
 
@@ -105,7 +155,11 @@ async function getProperty(env, id) {
   ).bind(id).first()
 
   if (!property) return null
-  return { ...property, images: await getImagesByProperty(env, id) }
+  return {
+    ...property,
+    images: await getImagesByProperty(env, id),
+    development_images: await getDevelopmentImages(env, property.development_name),
+  }
 }
 
 export default {
@@ -119,7 +173,7 @@ export default {
 
     try {
       if (path === '/health' && method === 'GET') {
-        return json({ ok: true, service: 'j3c-d1-api', version: '2026-09-11-admin-save-v2' })
+        return json({ ok: true, service: 'j3c-d1-api', version: '2026-09-11-location-photos-v1' })
       }
 
       if (path === '/properties' && method === 'GET') {
@@ -233,6 +287,55 @@ export default {
         ).bind(result.meta?.last_row_id).first()
 
         return json({ image }, 201)
+      }
+
+      if (path === '/development-images' && method === 'POST') {
+        const input = await readJson(request)
+        const developmentName = String(input?.development_name || '').trim()
+        if (!developmentName || !input?.image_key || !input?.image_url) {
+          return json({ error: 'development_name, image_key, and image_url are required.' }, 400)
+        }
+
+        await ensureDevelopmentImagesTable(env)
+        const isCover = input.is_cover ? 1 : 0
+        if (isCover) {
+          await env.DB.prepare('UPDATE development_images SET is_cover = 0 WHERE development_name = ?')
+            .bind(developmentName).run()
+        }
+
+        const result = await env.DB.prepare(
+          `INSERT INTO development_images
+             (development_name, image_key, image_url, alt_text, sort_order, is_cover, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
+        ).bind(
+          developmentName,
+          String(input.image_key),
+          String(input.image_url),
+          String(input.alt_text || ''),
+          Number(input.sort_order || 0),
+          isCover
+        ).run()
+
+        const image = await env.DB.prepare(
+          `SELECT id, development_name, image_key, image_url, alt_text, sort_order, is_cover, created_at
+           FROM development_images WHERE id = ?`
+        ).bind(result.meta?.last_row_id).first()
+
+        return json({ image }, 201)
+      }
+
+      const developmentImageMatch = path.match(/^\/development-images\/(\d+)$/)
+      if (developmentImageMatch && method === 'DELETE') {
+        const id = Number(developmentImageMatch[1])
+        await ensureDevelopmentImagesTable(env)
+        const image = await env.DB.prepare(
+          `SELECT id, development_name, image_key, image_url, alt_text, sort_order, is_cover, created_at
+           FROM development_images WHERE id = ?`
+        ).bind(id).first()
+
+        if (!image) return json({ error: 'Development image not found.' }, 404)
+        await env.DB.prepare('DELETE FROM development_images WHERE id = ?').bind(id).run()
+        return json({ deleted: true, image })
       }
 
       const imageMatch = path.match(/^\/images\/(\d+)$/)
