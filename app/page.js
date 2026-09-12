@@ -341,7 +341,7 @@ export default function Home() {
             <p>Choose Viber, WhatsApp, or Messenger below. Our property management team can also assist with viewings, rental questions, and tenant coordination.</p>
 
             <div className="contact-channels" aria-label="Direct contact options">
-              <a href="viber://add?number=639473068528" className="contact-channel channel-viber" aria-label="Contact J3C through Viber">
+              <a href="https://viber.me/639473068528" target="_blank" rel="noreferrer" className="contact-channel channel-viber" aria-label="Contact J3C through Viber">
                 <span className="channel-brand-icon" aria-hidden="true">
                   <img src="https://cdn.simpleicons.org/viber/7360F2" alt="" />
                 </span>

@@ -10,5 +10,5 @@ Included fixes from the latest review:
 The newer Cloudflare Worker code with the dedicated `development_images` table is still included and remains the preferred storage when deployed.
 
 ## Contact links update
-- Viber now uses the QR-derived link: `viber://add?number=639473068528`.
+- Viber button now uses Viber's browser-friendly Click-to-Chat URL: `https://viber.me/639473068528`, which is more reliable from a public website than the QR's `viber://add` deep link.
 - Messenger now opens the provided Messenger conversation link in a new tab.
