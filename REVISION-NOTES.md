@@ -43,3 +43,9 @@ The newer Cloudflare Worker code with the dedicated `development_images` table i
 - Viber now uses the installed-app deep link `viber://chat/?number=%2B639473068528` instead of `viber.me`, avoiding the Viber Business Account requirement of the web Click-to-Chat URL.
 - The Viber link opens in the current tab/user gesture (no `target=_blank`) so mobile browsers are less likely to block the app handoff.
 - Messenger no longer uses the share-specific `/e2ee/t/` route; it now uses the standard Messenger thread route `https://www.messenger.com/t/1567965688161013/`.
+
+## Nodemailer inquiry email setup
+- Inquiry form now sends real submissions through `POST /api/inquiry` instead of showing a preview-only success message.
+- Added Gmail SMTP/Nodemailer server route with validation, optional renter `Reply-To`, and a hidden honeypot field.
+- Added server-side SMTP environment variable placeholders to `.env.example` and setup instructions in `NODEMAILER-SETUP.md`.
+- Added `nodemailer` to `package.json` dependencies.

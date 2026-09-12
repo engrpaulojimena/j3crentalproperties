@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 
 export default function InquiryForm() {
-  const [submitted, setSubmitted] = useState(false)
+  const [submitState, setSubmitState] = useState('idle')
+  const [submitMessage, setSubmitMessage] = useState('')
   const [properties, setProperties] = useState([])
   const [selectedProperty, setSelectedProperty] = useState('')
 
@@ -29,16 +30,42 @@ export default function InquiryForm() {
     }
   }, [])
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
-    setSubmitted(true)
+    if (submitState === 'sending') return
+
+    setSubmitState('sending')
+    setSubmitMessage('')
+
+    const form = event.currentTarget
+    const formData = new FormData(form)
+    const payload = Object.fromEntries(formData.entries())
+
+    try {
+      const response = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await response.json().catch(() => ({}))
+
+      if (!response.ok) throw new Error(data.error || 'Unable to send inquiry.')
+
+      setSubmitState('success')
+      setSubmitMessage('Thank you! Your inquiry has been sent to J3C Rental Properties.')
+      form.reset()
+      setSelectedProperty(properties.length ? `${properties[0].development_name ? `${properties[0].development_name} — ` : ''}${properties[0].name}` : '')
+    } catch (error) {
+      setSubmitState('error')
+      setSubmitMessage(error.message || 'Unable to send your inquiry. Please try again.')
+    }
   }
 
   return (
     <form className="inquiry-form" id="inquiry-form" onSubmit={handleSubmit}>
       <div className="form-preview-note">
-        <span>Inquiry form preview</span>
-        <small>For direct assistance: j3crentalproperties@gmail.com</small>
+        <span>Rental inquiry</span>
+        <small>Sent directly to j3crentalproperties@gmail.com</small>
       </div>
 
       <div className="field-row">
@@ -79,14 +106,23 @@ export default function InquiryForm() {
         <textarea name="message" rows="4" placeholder="Ask about availability, rates, requirements, or the property." required />
       </label>
 
-      <button className="btn btn-gold btn-full" type="submit">
-        Send Inquiry <span aria-hidden="true">↗</span>
+      <input
+        name="website"
+        type="text"
+        tabIndex="-1"
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+      />
+
+      <button className="btn btn-gold btn-full" type="submit" disabled={submitState === 'sending'}>
+        {submitState === 'sending' ? 'Sending Inquiry…' : 'Send Inquiry'} <span aria-hidden="true">↗</span>
       </button>
 
-      {submitted && (
-        <div className="form-demo-success" role="status">
-          <strong>Preview submitted.</strong>
-          <span>The live version will send this inquiry to J3C once the receiving email is confirmed.</span>
+      {submitMessage && (
+        <div className="form-demo-success" role="status" aria-live="polite">
+          <strong>{submitState === 'success' ? 'Inquiry sent.' : 'Could not send inquiry.'}</strong>
+          <span>{submitMessage}</span>
         </div>
       )}
     </form>

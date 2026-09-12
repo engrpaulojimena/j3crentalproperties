@@ -1,0 +1,13 @@
+Add these lines to your existing .env.local file:
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=j3crentalproperties@gmail.com
+SMTP_PASS=PASTE_GOOGLE_APP_PASSWORD_HERE
+INQUIRY_TO=j3crentalproperties@gmail.com
+
+For SMTP_PASS, use the 16-character Google App Password, NOT the normal Gmail password.
+Do not commit .env.local to Git.
+
+For the live website, add the same values in your hosting provider's Environment Variables / Secrets and redeploy.
