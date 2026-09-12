@@ -77,18 +77,6 @@ export default function Home() {
             </div>
           </div>
 
-          <aside className="hero-property-card" data-reveal style={{ '--reveal-delay': '120ms' }}>
-            <div className="hero-card-topline"><span>J3C Rental Collection</span><b>Live</b></div>
-            <h2>Available homes<br />in one place.</h2>
-            <p>Owner-managed rental listings</p>
-            <div className="hero-card-divider" />
-            <div className="hero-card-facts">
-              <div><span>Listings</span><strong>Updated by J3C</strong></div>
-              <div><span>Locations</span><strong>Multiple properties</strong></div>
-              <div><span>Inquiries</span><strong>Direct to J3C</strong></div>
-            </div>
-            <a href="#properties" className="hero-card-link">Browse available units <Arrow /></a>
-          </aside>
         </div>
 
         <div className="hero-bottom">

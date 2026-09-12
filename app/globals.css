@@ -70,7 +70,7 @@ h1 em,h2 em{font-weight:500;color:var(--gold-2)}
 .hero-overlay{position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,rgba(5,14,30,.96) 0%,rgba(5,14,30,.82) 41%,rgba(5,14,30,.38) 70%,rgba(5,14,30,.13) 100%),linear-gradient(0deg,rgba(4,11,25,.74),transparent 54%)}
 .hero-noise{position:absolute;inset:0;z-index:-1;opacity:.12;background-image:radial-gradient(rgba(255,255,255,.65) .55px,transparent .55px);background-size:5px 5px;mix-blend-mode:soft-light}
 @keyframes heroZoom{from{transform:scale(1.035)}to{transform:scale(1)}}
-.hero-container{width:min(var(--container),calc(100% - 80px));height:100%;margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:80px;align-items:center;padding-bottom:74px}
+.hero-container{width:min(var(--container),calc(100% - 80px));height:100%;margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr);gap:0;align-items:center;padding-bottom:74px}
 .hero-copy{max-width:880px;animation:heroRise .75s ease both}
 @keyframes heroRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .hero h1{font-size:clamp(64px,6.3vw,96px);line-height:.92;margin:0 0 28px;max-width:980px;text-wrap:balance}
@@ -171,7 +171,7 @@ footer{background:var(--paper);border-top:1px solid var(--line)}.footer-inner{mi
 
 @media(max-width:1180px){
   .desktop-nav{display:none}
-  .hero-container{grid-template-columns:minmax(0,1fr) 320px;gap:50px}
+  .hero-container{grid-template-columns:minmax(0,1fr);gap:0}
   .residence-grid,.tenant-grid{grid-template-columns:1fr;gap:60px}
   .property-collage{min-height:620px}
   .brand-story{grid-template-columns:1fr}.brand-story-image{min-height:560px}.brand-story-copy{min-height:650px}
@@ -429,15 +429,14 @@ body{overflow-x:clip}
   .desktop-nav{justify-self:center}
   .desktop-cta{justify-self:end}
 
-  /* A calmer editorial hero: headline and property card share one optical center line. */
+  /* Keep the hero copy on the left while leaving the property image unobstructed. */
   .hero-container{
-    grid-template-columns:minmax(0,1fr) minmax(320px,350px);
-    gap:clamp(54px,6vw,104px);
+    grid-template-columns:minmax(0,1fr);
+    gap:0;
     align-items:center;
   }
   .hero-copy{max-width:900px;padding-top:2px}
   .hero h1{font-size:clamp(64px,5.35vw,88px);max-width:900px}
-  .hero-property-card{max-width:350px;justify-self:end}
 
   .hero-bottom-inner{
     display:grid;

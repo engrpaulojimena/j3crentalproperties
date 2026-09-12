@@ -49,3 +49,8 @@ The newer Cloudflare Worker code with the dedicated `development_images` table i
 - Added Gmail SMTP/Nodemailer server route with validation, optional renter `Reply-To`, and a hidden honeypot field.
 - Added server-side SMTP environment variable placeholders to `.env.example` and setup instructions in `NODEMAILER-SETUP.md`.
 - Added `nodemailer` to `package.json` dependencies.
+
+
+## Hero image cleanup
+- Removed the large “Available homes in one place” overlay card from the hero so the background property photo stays unobstructed.
+- Preserved the existing public/photos folder and all current bundled image assets in this ZIP.
