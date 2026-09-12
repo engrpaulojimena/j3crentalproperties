@@ -94,7 +94,7 @@ export default function Home() {
         <div className="hero-bottom">
           <div className="hero-bottom-inner">
             <span>Featured J3C rental communities</span>
-            <span>Valenzuela · Taguig · Alabang · Manila · Quezon City · Tagaytay · Pampanga</span>
+            <span>Valenzuela · Taguig · Alabang · Manila · Quezon City · Tagaytay · Pampanga · Bulacan · Batangas</span>
           </div>
         </div>
       </section>
@@ -165,7 +165,7 @@ export default function Home() {
           <div className="story-logo"><Logo /></div>
           <p className="eyebrow eyebrow-light"><span /> ABOUT J3C RENTAL PROPERTIES</p>
           <h2>Built through experience,<br /><em>managed with care.</em></h2>
-          <p>J3C Rental Properties began in June 2018 with a studio-type condominium unit operated as a bedspace at Avida Towers San Lazaro in Sta. Cruz, Manila. The business grew through the collaboration of owner Nathaniel Alexander Torres and property manager Josephine De Guia, expanding from its first rental into a wider portfolio of condominium units and accommodations.</p>
+          <p>J3C Rental Properties began in June 2018 with a studio-type condominium unit operated as a bedspace at Avida Towers San Lazaro in Sta. Cruz, Manila. The business grew through the collaboration of owner Chiqui Torres and property manager Josephine De Guia, expanding from its first rental into a wider portfolio of condominium units and accommodations.</p>
           <p className="about-secondary-copy">Today, J3C manages 9 quality condo units across Valenzuela, Taguig, and Muntinlupa-Alabang, together with its bedspace accommodation in Manila. The focus remains simple: clean, safe, and comfortable living spaces supported by hands-on property management.</p>
 
           <div className="about-stats" aria-label="J3C business highlights">
@@ -205,9 +205,9 @@ export default function Home() {
 
           <div className="team-grid">
             <article className="team-card" data-reveal>
-              <div className="team-card-mark" aria-hidden="true">NT</div>
+              <div className="team-card-mark" aria-hidden="true">CT</div>
               <span>FOUNDER / DIRECTOR</span>
-              <h3>Nathaniel Alexander Torres</h3>
+              <h3>Chiqui Torres</h3>
               <p>Business direction, rental portfolio oversight, and long-term growth of J3C Rental Properties.</p>
             </article>
 

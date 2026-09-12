@@ -39,7 +39,7 @@ function propertyPayload(input = {}) {
     location: String(input.location ?? '').trim(),
     full_address: String(input.full_address ?? '').trim(),
     monthly_rate: Number(input.monthly_rate ?? input.rate ?? 0),
-    status: ['Available', 'Available Soon', 'Occupied'].includes(input.status) ? input.status : 'Available',
+    status: ['Vacant', 'Available', 'Available Soon', 'Occupied'].includes(input.status) ? input.status : 'Available',
     available_on: input.available_on ? String(input.available_on).trim() : null,
     description: String(input.description ?? '').trim(),
     rent_includes: String(input.rent_includes ?? '').trim(),

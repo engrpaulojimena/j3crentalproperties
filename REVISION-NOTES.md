@@ -32,3 +32,8 @@ The newer Cloudflare Worker code with the dedicated `development_images` table i
 - Forced the mobile unit detail modal into normal block flow so the details panel cannot overlap the gallery.
 - Moved the thumbnail rail onto the light content background with a divider for clearer separation.
 - Kept thumbnails horizontally scrollable and preserved the sticky Back/Close toolbar.
+
+## September 12 follow-up revisions
+- Added `Vacant` as a supported unit status alongside Available, Available Soon, and Occupied in Admin and the Cloudflare Worker payload validation. Vacant units are treated as currently available on public unit details and inquiry selection.
+- Replaced public references to `Nathaniel Alexander Torres` with `Chiqui Torres`, including the team card initials.
+- Added `Bulacan` and `Batangas` to the hero location strip for future listings.

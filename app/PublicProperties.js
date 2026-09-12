@@ -421,7 +421,7 @@ export default function PublicProperties() {
             </div>
 
             <div className="property-detail-content">
-              <div className="property-detail-kicker"><span /> {activeProperty.status === 'Available' ? 'AVAILABLE RENTAL' : 'UPCOMING AVAILABILITY'}</div>
+              <div className="property-detail-kicker"><span /> {['Vacant', 'Available'].includes(activeProperty.status) ? 'AVAILABLE RENTAL' : activeProperty.status === 'Occupied' ? 'CURRENTLY OCCUPIED' : 'UPCOMING AVAILABILITY'}</div>
               <div className="property-detail-development">{getDevelopmentName(activeProperty)}</div>
               <h2>{activeProperty.name}</h2>
               <p className="property-detail-location">{activeProperty.full_address || activeProperty.location}</p>

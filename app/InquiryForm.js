@@ -13,7 +13,7 @@ export default function InquiryForm() {
       .then((response) => response.ok ? response.json() : Promise.reject())
       .then((data) => {
         if (!active) return
-        const available = (data.properties || []).filter((property) => property.status === 'Available' || property.status === 'Available Soon' || (property.status === 'Occupied' && property.available_on))
+        const available = (data.properties || []).filter((property) => property.status === 'Vacant' || property.status === 'Available' || property.status === 'Available Soon' || (property.status === 'Occupied' && property.available_on))
         setProperties(available)
         if (available.length && !selectedProperty) setSelectedProperty(`${available[0].development_name ? `${available[0].development_name} — ` : ''}${available[0].name}`)
       })

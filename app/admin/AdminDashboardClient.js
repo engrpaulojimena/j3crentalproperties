@@ -216,7 +216,7 @@ export default function AdminDashboardClient() {
   }, [ready, backendMode, units])
 
   const stats = useMemo(() => {
-    const available = units.filter((unit) => ['Available', 'Available Soon'].includes(unit.status)).length
+    const available = units.filter((unit) => ['Vacant', 'Available', 'Available Soon'].includes(unit.status)).length
     const occupied = units.filter((unit) => unit.status === 'Occupied').length
     return { total: units.length, available, occupied }
   }, [units])
@@ -853,7 +853,7 @@ export default function AdminDashboardClient() {
               <label>Full address<input name="full_address" value={form.full_address} onChange={handleChange} placeholder="Complete property address" /></label>
               <div className={styles.formGrid}>
                 <label>Monthly rate<div className={styles.moneyInput}><span>₱</span><input inputMode="numeric" name="rate" value={form.rate} onChange={handleChange} placeholder="18000" required /></div></label>
-                <label>Status<select name="status" value={form.status} onChange={handleChange}><option>Available</option><option>Available Soon</option><option>Occupied</option></select></label>
+                <label>Status<select name="status" value={form.status} onChange={handleChange}><option>Vacant</option><option>Available</option><option>Available Soon</option><option>Occupied</option></select></label>
               </div>
               <div className={styles.formGrid}>
                 <label>Available on<input type="date" name="available_on" value={form.available_on} onChange={handleChange} /></label>
