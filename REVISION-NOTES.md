@@ -12,3 +12,9 @@ The newer Cloudflare Worker code with the dedicated `development_images` table i
 ## Contact links update
 - Viber button now uses Viber's browser-friendly Click-to-Chat URL: `https://viber.me/639473068528`, which is more reliable from a public website than the QR's `viber://add` deep link.
 - Messenger now opens the provided Messenger conversation link in a new tab.
+
+## Mobile unit-detail navigation fix
+- Keeps the fixed site header/Menu accessible while a unit detail is open on phones.
+- Moves the persistent **Back to Available Units** and close controls below the mobile header so they are no longer hidden behind it.
+- Clicking **Menu → Available Units** (or any other in-page navigation link) now closes the open unit detail before navigating.
+- Hash navigation also closes the unit detail as a fallback.

@@ -151,6 +151,7 @@ export default function PublicProperties() {
 
   useEffect(() => {
     if (!activeProperty) return
+
     function onKey(event) {
       if (event.key === 'Escape') setActiveProperty(null)
       if (event.key === 'ArrowRight') {
@@ -162,10 +163,28 @@ export default function PublicProperties() {
         if (count > 1) setActiveImage((current) => (current - 1 + count) % count)
       }
     }
+
+    // Keep the site navigation usable while a unit is open. Any in-page
+    // navigation choice (especially Available Units) closes the unit detail
+    // first so the selected section can be shown normally.
+    function onPageNavigation(event) {
+      const link = event.target?.closest?.('a[href^="#"]')
+      if (!link) return
+      setActiveProperty(null)
+    }
+
+    function onHashChange() {
+      setActiveProperty(null)
+    }
+
     window.addEventListener('keydown', onKey)
+    window.addEventListener('hashchange', onHashChange)
+    document.addEventListener('click', onPageNavigation)
     document.body.classList.add('property-modal-open')
     return () => {
       window.removeEventListener('keydown', onKey)
+      window.removeEventListener('hashchange', onHashChange)
+      document.removeEventListener('click', onPageNavigation)
       document.body.classList.remove('property-modal-open')
     }
   }, [activeProperty])
