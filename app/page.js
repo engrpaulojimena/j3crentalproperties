@@ -341,7 +341,7 @@ export default function Home() {
             <p>Choose Viber, WhatsApp, or Messenger below. Our property management team can also assist with viewings, rental questions, and tenant coordination.</p>
 
             <div className="contact-channels" aria-label="Direct contact options">
-              <a href="viber://chat?number=%2B639473068528" className="contact-channel channel-viber" aria-label="Contact J3C through Viber">
+              <a href="viber://add?number=639473068528" className="contact-channel channel-viber" aria-label="Contact J3C through Viber">
                 <span className="channel-brand-icon" aria-hidden="true">
                   <img src="https://cdn.simpleicons.org/viber/7360F2" alt="" />
                 </span>
@@ -355,11 +355,11 @@ export default function Home() {
                 <span><strong>WhatsApp</strong><small>+63 947 306 8528</small></span>
                 <Arrow />
               </a>
-              <a href="#inquiry-form" className="contact-channel channel-messenger" aria-label="Contact J3C through Messenger">
+              <a href="https://www.messenger.com/e2ee/t/1567965688161013/" target="_blank" rel="noreferrer" className="contact-channel channel-messenger" aria-label="Contact J3C through Messenger">
                 <span className="channel-brand-icon" aria-hidden="true">
                   <img src="https://cdn.simpleicons.org/messenger/00B2FF" alt="" />
                 </span>
-                <span><strong>Messenger</strong><small>Use the inquiry form for now</small></span>
+                <span><strong>Messenger</strong><small>Send us a message</small></span>
                 <Arrow />
               </a>
             </div>

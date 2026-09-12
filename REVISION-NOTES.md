@@ -8,3 +8,7 @@ Included fixes from the latest review:
 - Unit details now have a clear `Back to Available Units` control, kept visible on mobile while the detail view scrolls.
 
 The newer Cloudflare Worker code with the dedicated `development_images` table is still included and remains the preferred storage when deployed.
+
+## Contact links update
+- Viber now uses the QR-derived link: `viber://add?number=639473068528`.
+- Messenger now opens the provided Messenger conversation link in a new tab.
