@@ -877,6 +877,7 @@ body{overflow-x:clip}
 @keyframes propertyModalFade{from{opacity:0}to{opacity:1}}
 .property-detail-shell{position:relative;width:min(1220px,100%);max-height:min(840px,calc(100vh - 68px));overflow:auto;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr);border:1px solid rgba(255,255,255,.18);border-radius:28px;background:#f9f7f1;box-shadow:0 45px 110px rgba(0,0,0,.42);animation:propertyModalRise .34s cubic-bezier(.2,.75,.2,1) both}
 @keyframes propertyModalRise{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+.property-detail-mobile-actions{display:contents}
 .property-detail-close{position:absolute;z-index:5;top:16px;right:16px;width:42px;height:42px;border:1px solid rgba(255,255,255,.28);border-radius:50%;background:rgba(8,23,47,.64);backdrop-filter:blur(10px);color:#fff;font-size:25px;line-height:1;transition:transform .2s ease,background .2s ease}.property-detail-close:hover{transform:rotate(5deg);background:#08172f}
 .property-detail-back{position:absolute;z-index:5;top:16px;left:16px;min-height:42px;padding:0 15px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(8,23,47,.72);backdrop-filter:blur(10px);color:#fff;font-size:9px;font-weight:850;letter-spacing:.02em;box-shadow:0 8px 24px rgba(0,0,0,.12);transition:background .2s ease,transform .2s ease}.property-detail-back span{margin-right:6px;color:var(--gold-2);font-size:15px;vertical-align:-1px}.property-detail-back:hover{background:#08172f;transform:translateY(-1px)}
 .property-detail-gallery{min-width:0;padding:14px;background:#0b1830}
@@ -1747,26 +1748,108 @@ body{overflow-x:clip}
     overflow-y:auto;
     overscroll-behavior:contain;
   }
-  .property-detail-back{
-    position:fixed;
-    top:84px;
-    left:12px;
+  .property-detail-mobile-actions{
+    position:sticky;
+    top:0;
     z-index:75;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    min-height:56px;
+    padding:8px 12px;
+    border-bottom:1px solid rgba(8,23,47,.10);
+    background:rgba(249,247,241,.96);
+    backdrop-filter:blur(12px);
+    box-shadow:0 5px 18px rgba(8,23,47,.08);
+  }
+  .property-detail-back{
+    position:static;
     min-height:40px;
+    max-width:calc(100% - 54px);
     padding:0 14px;
-    border-color:rgba(255,255,255,.42);
-    background:rgba(8,23,47,.88);
-    box-shadow:0 8px 24px rgba(0,0,0,.2);
+    border-color:rgba(8,23,47,.16);
+    background:#08172f;
+    box-shadow:none;
+    white-space:nowrap;
   }
   .property-detail-close{
-    position:fixed;
-    top:84px;
-    right:12px;
-    z-index:75;
+    position:static;
+    flex:0 0 40px;
     width:40px;
     height:40px;
-    background:rgba(8,23,47,.88);
-    box-shadow:0 8px 24px rgba(0,0,0,.2);
+    border-color:rgba(8,23,47,.16);
+    background:#08172f;
+    box-shadow:none;
   }
   .property-detail-gallery{padding-top:0}
+}
+
+/* ===== MOBILE UNIT DETAIL LAYOUT POLISH =====
+   Keep the navigation controls aligned in their own toolbar and prevent the
+   thumbnail rail from being compressed by the flex/grid layout on phones. */
+@media (max-width:560px){
+  .property-detail-mobile-actions{
+    min-height:56px;
+    height:56px;
+    flex:0 0 56px;
+    box-sizing:border-box;
+  }
+  .property-detail-back{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    height:40px;
+    min-height:40px;
+    margin:0;
+  }
+  .property-detail-close{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    height:40px;
+    min-height:40px;
+    margin:0;
+    padding:0;
+  }
+  .property-detail-gallery{
+    flex:none;
+    width:100%;
+    min-width:0;
+    overflow:visible;
+  }
+  .property-detail-main-image{
+    flex:0 0 auto;
+    width:100%;
+  }
+  .property-detail-thumbs{
+    flex:0 0 auto;
+    width:100%;
+    min-height:68px;
+    box-sizing:border-box;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:0;
+    padding:8px 10px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    background:#0b1830;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;
+  }
+  .property-detail-thumbs button{
+    flex:0 0 72px;
+    width:72px;
+    min-width:72px;
+    height:52px;
+    min-height:52px;
+    border-radius:8px;
+  }
+  .property-detail-thumbs img{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
 }

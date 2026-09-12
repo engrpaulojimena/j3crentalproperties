@@ -385,10 +385,12 @@ export default function PublicProperties() {
           if (event.target === event.currentTarget) setActiveProperty(null)
         }}>
           <div className="property-detail-shell">
-            <button className="property-detail-close" type="button" onClick={() => setActiveProperty(null)} aria-label="Close property details">×</button>
-            <button className="property-detail-back" type="button" onClick={backToAvailableUnits}>
-              <span aria-hidden="true">←</span> Back to Available Units
-            </button>
+            <div className="property-detail-mobile-actions">
+              <button className="property-detail-back" type="button" onClick={backToAvailableUnits}>
+                <span aria-hidden="true">←</span> Back to Available Units
+              </button>
+              <button className="property-detail-close" type="button" onClick={() => setActiveProperty(null)} aria-label="Close property details">×</button>
+            </div>
 
             <div className="property-detail-gallery">
               <div className="property-detail-main-image">

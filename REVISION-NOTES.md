@@ -18,3 +18,12 @@ The newer Cloudflare Worker code with the dedicated `development_images` table i
 - Moves the persistent **Back to Available Units** and close controls below the mobile header so they are no longer hidden behind it.
 - Clicking **Menu → Available Units** (or any other in-page navigation link) now closes the open unit detail before navigating.
 - Hash navigation also closes the unit detail as a fallback.
+
+## Mobile navigation alignment
+- Back and Close controls now sit in one aligned sticky toolbar above the unit gallery on mobile.
+- The controls no longer float over the property photo or compete visually with the gallery arrows.
+
+## Mobile unit detail layout polish
+- Back and Close controls now sit in one aligned sticky toolbar above the gallery on phones.
+- The thumbnail rail below the main image is protected from flex shrinking and keeps full-size horizontal thumbnails.
+- The thumbnail row remains horizontally scrollable for units with many photos.
