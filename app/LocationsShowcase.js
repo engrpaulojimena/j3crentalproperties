@@ -32,6 +32,37 @@ function parseAmenities(value) {
   return String(value).split(',').map((item) => item.trim()).filter(Boolean)
 }
 
+const LOCATION_IMAGE_PREFIX = '[J3C_LOCATION]'
+
+function amenityKey(value) {
+  return String(value || '')
+    .normalize('NFKD')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '')
+}
+
+function uniqueAmenities(items) {
+  const seen = new Set()
+  const output = []
+  for (const item of items) {
+    const clean = String(item || '').trim()
+    const key = amenityKey(clean)
+    if (!clean || !key || seen.has(key)) continue
+    seen.add(key)
+    output.push(clean)
+  }
+  return output
+}
+
+function isLegacyLocationImage(image) {
+  return String(image?.alt_text || '').startsWith(LOCATION_IMAGE_PREFIX)
+}
+
+function cleanLocationAlt(image, fallback) {
+  const alt = String(image?.alt_text || '').replace(LOCATION_IMAGE_PREFIX, '').trim()
+  return alt || fallback
+}
+
 function slugify(value) {
   return String(value || 'location')
     .toLowerCase()
@@ -97,21 +128,32 @@ export default function LocationsShowcase() {
             label: image.alt_text || `${name} location photo ${index + 1}`,
             alt: image.alt_text || `${name} location photo`,
           }))
+        const legacyLocationImages = units
+          .flatMap((unit) => unit.images || [])
+          .filter((image) => image?.image_url && isLegacyLocationImage(image))
+          .slice(0, 8)
+          .map((image, index) => {
+            const alt = cleanLocationAlt(image, `${name} location photo ${index + 1}`)
+            return { src: image.image_url, label: alt, alt }
+          })
         const unitImages = units
           .flatMap((unit) => unit.images || [])
-          .filter((image) => image?.image_url)
+          .filter((image) => image?.image_url && !isLegacyLocationImage(image))
           .slice(0, 6)
           .map((image, index) => ({
             src: image.image_url,
             label: image.alt_text || `${name} photo ${index + 1}`,
             alt: image.alt_text || `${name} property photo`,
           }))
-        const images = managedLocationImages.length
-          ? managedLocationImages
+        const managedImages = [...managedLocationImages, ...legacyLocationImages]
+          .filter((image, index, all) => all.findIndex((candidate) => candidate.src === image.src) === index)
+          .slice(0, 8)
+        const images = managedImages.length
+          ? managedImages
           : unitImages.length
             ? unitImages
             : (communityImages[name] || [])
-        const amenities = [...new Set(units.flatMap((unit) => parseAmenities(unit.amenities)))].slice(0, 4)
+        const amenities = uniqueAmenities(units.flatMap((unit) => parseAmenities(unit.amenities))).slice(0, 4)
 
         return {
           location,

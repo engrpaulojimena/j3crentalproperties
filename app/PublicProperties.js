@@ -61,19 +61,44 @@ function statusClass(property) {
 
 function parseAmenities(value) {
   if (!value) return []
-  if (Array.isArray(value)) return value.filter(Boolean)
+  let items = []
+  if (Array.isArray(value)) items = value.filter(Boolean)
   try {
     const parsed = JSON.parse(value)
-    if (Array.isArray(parsed)) return parsed.filter(Boolean)
+    if (Array.isArray(parsed)) items = parsed.filter(Boolean)
   } catch {}
-  return String(value)
-    .split(',')
-    .map((item) => item.trim())
-    .filter(Boolean)
+  if (!items.length) {
+    items = String(value)
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean)
+  }
+
+  const seen = new Set()
+  return items.filter((item) => {
+    const key = String(item)
+      .normalize('NFKD')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '')
+    if (!key || seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+const LOCATION_IMAGE_PREFIX = '[J3C_LOCATION]'
+
+function isLocationGalleryImage(image) {
+  return String(image?.alt_text || '').startsWith(LOCATION_IMAGE_PREFIX)
+}
+
+function getUnitImages(property) {
+  return (property?.images || []).filter((image) => !isLocationGalleryImage(image))
 }
 
 function getCover(property) {
-  return property.images?.find((image) => Number(image.is_cover) === 1) || property.images?.[0] || null
+  const images = getUnitImages(property)
+  return images.find((image) => Number(image.is_cover) === 1) || images[0] || null
 }
 
 function getDevelopmentName(property) {
@@ -169,7 +194,6 @@ export default function PublicProperties() {
         property.building_name,
         property.floor_label,
         property.description,
-        property.unit_code,
         property.amenities,
       ].some((value) => normalizeText(value).includes(needle))
     })
@@ -186,8 +210,12 @@ export default function PublicProperties() {
   }, [visibleProperties])
 
   function openProperty(property) {
-    setActiveProperty(property)
+    setActiveProperty({ ...property, images: getUnitImages(property) })
     setActiveImage(0)
+  }
+
+  function backToAvailableUnits() {
+    setActiveProperty(null)
   }
 
   function inquire(property) {
@@ -226,7 +254,7 @@ export default function PublicProperties() {
         <div className="property-browser-controls">
           <label>
             <span>Search</span>
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Unit, building or location" />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Property, building or location" />
           </label>
           <label>
             <span>Property</span>
@@ -276,7 +304,7 @@ export default function PublicProperties() {
                 <div className="public-property-grid grouped">
                   {group.units.map((property, index) => {
                     const cover = getCover(property)
-                    const photoCount = property.images?.length || 0
+                    const photoCount = getUnitImages(property).length
                     const fallback = getFallbackImage(property)
                     return (
                       <article className="public-property-card" key={property.id} style={{ '--card-delay': `${Math.min(index, 5) * 70}ms` }}>
@@ -295,8 +323,7 @@ export default function PublicProperties() {
                           <div className="property-card-heading">
                             <div>
                               <span className="property-unit-code">
-                                {property.unit_code ? `Unit ${property.unit_code}` : 'Rental unit'}
-                                {property.building_name ? ` · ${property.building_name}` : ''}
+                                {property.building_name || 'Rental listing'}
                                 {property.floor_label ? ` · ${property.floor_label}` : ''}
                               </span>
                               <h3>{property.name}</h3>
@@ -340,6 +367,9 @@ export default function PublicProperties() {
         }}>
           <div className="property-detail-shell">
             <button className="property-detail-close" type="button" onClick={() => setActiveProperty(null)} aria-label="Close property details">×</button>
+            <button className="property-detail-back" type="button" onClick={backToAvailableUnits}>
+              <span aria-hidden="true">←</span> Back to Available Units
+            </button>
 
             <div className="property-detail-gallery">
               <div className="property-detail-main-image">

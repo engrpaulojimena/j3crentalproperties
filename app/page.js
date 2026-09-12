@@ -94,8 +94,7 @@ export default function Home() {
         <div className="hero-bottom">
           <div className="hero-bottom-inner">
             <span>Featured J3C rental communities</span>
-            <span>Valenzuela · Taguig · Alabang · Manila</span>
-            <span>Direct rental inquiries</span>
+            <span>Valenzuela · Taguig · Alabang · Manila · Quezon City · Tagaytay · Pampanga</span>
           </div>
         </div>
       </section>

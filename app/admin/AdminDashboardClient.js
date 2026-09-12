@@ -5,6 +5,15 @@ import { useRouter } from 'next/navigation'
 import styles from './AdminDashboard.module.css'
 
 const STORAGE_KEY = 'j3c-admin-units-preview'
+const LOCATION_IMAGE_PREFIX = '[J3C_LOCATION]'
+
+function isLegacyLocationImage(image) {
+  return String(image?.alt_text || '').startsWith(LOCATION_IMAGE_PREFIX)
+}
+
+function unitOnlyImages(unit) {
+  return (unit?.images || []).filter((image) => !isLegacyLocationImage(image))
+}
 
 const seedUnits = [
   {
@@ -276,15 +285,29 @@ export default function AdminDashboardClient() {
           location: unit.location || '',
           full_address: unit.full_address || '',
           units: [],
-          images: Array.isArray(unit.development_images) ? unit.development_images : [],
+          images: [],
         })
       }
+
       const group = groups.get(name)
       group.units.push(unit)
       if (!group.location && unit.location) group.location = unit.location
       if (!group.full_address && unit.full_address) group.full_address = unit.full_address
-      if ((!group.images || group.images.length === 0) && Array.isArray(unit.development_images) && unit.development_images.length) {
-        group.images = unit.development_images
+
+      const incoming = [
+        ...(Array.isArray(unit.development_images)
+          ? unit.development_images.map((image) => ({ ...image, _location_storage: 'development' }))
+          : []),
+        ...(unit.images || [])
+          .filter(isLegacyLocationImage)
+          .map((image) => ({ ...image, _location_storage: 'property' })),
+      ]
+
+      for (const image of incoming) {
+        const key = `${image._location_storage}:${image.id || image.image_url}`
+        if (!group.images.some((existing) => `${existing._location_storage}:${existing.id || existing.image_url}` === key)) {
+          group.images.push(image)
+        }
       }
     }
     return [...groups.values()].sort((a, b) => a.name.localeCompare(b.name))
@@ -402,16 +425,20 @@ export default function AdminDashboardClient() {
     if (!saveResponse.ok) throw new Error(saveData.error || 'Could not save image record.')
   }
 
-  async function uploadDevelopmentPhotos(developmentName, files, existingImages = []) {
+  async function uploadDevelopmentPhotos(developmentName, propertyId, files, existingImages = []) {
     const chosen = Array.from(files || [])
     if (!chosen.length || backendMode !== 'cloud') return
+    if (!propertyId) {
+      setStatusMessage('This location needs at least one saved unit before location photos can be uploaded.')
+      return
+    }
 
     setLocationPhotoBusy(developmentName)
     setStatusMessage('')
     try {
       for (let index = 0; index < chosen.length; index += 1) {
         const cloudData = await uploadCloudinaryFile(chosen[index])
-        const saveResponse = await fetch('/api/development-images', {
+        let saveResponse = await fetch('/api/development-images', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
@@ -423,7 +450,27 @@ export default function AdminDashboardClient() {
             is_cover: existingImages.length === 0 && index === 0,
           }),
         })
-        const saveData = await saveResponse.json()
+        let saveData = await saveResponse.json()
+
+        // Backward-compatible fallback for older deployed Worker versions that
+        // do not yet expose /development-images. Store the image against one
+        // unit with a private marker; the public site treats it as a location
+        // gallery image and hides it from the unit gallery.
+        if (!saveResponse.ok && saveResponse.status === 404) {
+          saveResponse = await fetch(`/api/properties/${propertyId}/images`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+              image_key: cloudData.public_id,
+              image_url: cloudData.secure_url,
+              alt_text: `${LOCATION_IMAGE_PREFIX} ${developmentName} location photo`,
+              sort_order: 9000 + existingImages.length + index,
+              is_cover: false,
+            }),
+          })
+          saveData = await saveResponse.json()
+        }
+
         if (!saveResponse.ok) throw new Error(saveData.error || 'Could not save location photo.')
       }
       await loadUnits()
@@ -435,7 +482,7 @@ export default function AdminDashboardClient() {
     }
   }
 
-  async function deleteDevelopmentImage(imageId, developmentName) {
+  async function deleteDevelopmentImage(image, developmentName) {
     if (backendMode !== 'cloud') return
     const ok = window.confirm(`Remove this ${developmentName} location photo?`)
     if (!ok) return
@@ -443,7 +490,10 @@ export default function AdminDashboardClient() {
     setLocationPhotoBusy(developmentName)
     setStatusMessage('')
     try {
-      const response = await fetch(`/api/development-images/${imageId}`, { method: 'DELETE' })
+      const endpoint = image?._location_storage === 'property'
+        ? `/api/property-images/${image.id}`
+        : `/api/development-images/${image.id}`
+      const response = await fetch(endpoint, { method: 'DELETE' })
       const data = await response.json()
       if (!response.ok) throw new Error(data.error || 'Could not remove location photo.')
       await loadUnits()
@@ -505,7 +555,7 @@ export default function AdminDashboardClient() {
         const savedProperty = data.property
 
         for (let index = 0; index < selectedFiles.length; index += 1) {
-          const currentImages = savedProperty.images || []
+          const currentImages = unitOnlyImages(savedProperty)
           const shouldBeCover = currentImages.length === 0 && index === 0
           await uploadOneImage(selectedFiles[index], savedProperty.id, shouldBeCover)
         }
@@ -628,7 +678,8 @@ export default function AdminDashboardClient() {
               ) : (
                 <div className={styles.unitList}>
                   {units.map((unit) => {
-                    const cover = unit.images?.find((image) => image.is_cover) || unit.images?.[0]
+                    const unitImages = unitOnlyImages(unit)
+                    const cover = unitImages.find((image) => image.is_cover) || unitImages[0]
                     return (
                       <article className={styles.unitCard} key={unit.id}>
                         <div className={styles.thumb}>
@@ -643,7 +694,7 @@ export default function AdminDashboardClient() {
                           <p>{unit.development_name ? `${unit.development_name} • ` : ''}{unit.location}{unit.available_on ? ` • ${unit.status === 'Occupied' ? 'Available ' : unit.status === 'Available Soon' ? 'Available ' : ''}${unit.available_on}` : ''}</p>
                           <strong>{formatPeso(unit.rate)} <small>/ month</small></strong>
                           {unit.description && <small className={styles.description}>{unit.description}</small>}
-                          {unit.images?.length > 0 && <small className={styles.photoCount}>{unit.images.length} photo{unit.images.length > 1 ? 's' : ''}</small>}
+                          {unitImages.length > 0 && <small className={styles.photoCount}>{unitImages.length} photo{unitImages.length > 1 ? 's' : ''}</small>}
                         </div>
                         <div className={styles.rowActions}>
                           <button type="button" onClick={() => openEdit(unit)}>Edit</button>
@@ -683,7 +734,7 @@ export default function AdminDashboardClient() {
                           multiple
                           disabled={backendMode !== 'cloud' || isBusy}
                           onChange={(event) => {
-                            uploadDevelopmentPhotos(group.name, event.target.files, group.images || [])
+                            uploadDevelopmentPhotos(group.name, group.units[0]?.id, event.target.files, group.images || [])
                             event.target.value = ''
                           }}
                         />
@@ -693,10 +744,10 @@ export default function AdminDashboardClient() {
                     {group.images?.length ? (
                       <div className={styles.locationPhotoGrid}>
                         {group.images.map((image, index) => (
-                          <figure key={image.id}>
+                          <figure key={`${image._location_storage || 'development'}-${image.id || image.image_url}`}>
                             <img src={image.image_url} alt={image.alt_text || `${group.name} location photo`} />
                             <figcaption>{image.is_cover ? 'Cover photo' : `Photo ${index + 1}`}</figcaption>
-                            <button type="button" aria-label="Remove photo" disabled={isBusy} onClick={() => deleteDevelopmentImage(image.id, group.name)}>×</button>
+                            <button type="button" aria-label="Remove photo" disabled={isBusy} onClick={() => deleteDevelopmentImage(image, group.name)}>×</button>
                           </figure>
                         ))}
                       </div>
@@ -759,7 +810,7 @@ export default function AdminDashboardClient() {
                     )}
                   </div>
                 </div>
-                <label>Unit no.<input name="unit_code" value={form.unit_code} onChange={handleChange} placeholder="e.g. 1 or 306" /></label>
+                <label>Unit no. (Admin only)<input name="unit_code" value={form.unit_code} onChange={handleChange} placeholder="e.g. 1 or 306" /></label>
               </div>
               <div className={styles.formGrid}>
                 <label>Building<input name="building_name" value={form.building_name} onChange={handleChange} placeholder="e.g. Janina Bldg." /></label>
@@ -821,11 +872,11 @@ export default function AdminDashboardClient() {
               <label>Highlights & amenities<textarea name="amenities" value={form.amenities} onChange={handleChange} placeholder="Separate items with commas" rows="4" /></label>
               <label>Google Maps link<input name="map_url" value={form.map_url} onChange={handleChange} placeholder="https://maps.app.goo.gl/..." /></label>
 
-              {editingUnit?.images?.length > 0 && (
+              {editingUnit && unitOnlyImages(editingUnit).length > 0 && (
                 <div className={styles.currentPhotos}>
                   <strong>Current photos</strong>
                   <div className={styles.currentPhotoGrid}>
-                    {editingUnit.images.map((image) => (
+                    {unitOnlyImages(editingUnit).map((image) => (
                       <figure key={image.id}>
                         <img src={image.image_url} alt={image.alt_text || editingUnit.name} />
                         {backendMode === 'cloud' && <button type="button" onClick={() => deleteImage(image.id)}>×</button>}
