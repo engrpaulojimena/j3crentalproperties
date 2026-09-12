@@ -27,3 +27,8 @@ The newer Cloudflare Worker code with the dedicated `development_images` table i
 - Back and Close controls now sit in one aligned sticky toolbar above the gallery on phones.
 - The thumbnail rail below the main image is protected from flex shrinking and keeps full-size horizontal thumbnails.
 - The thumbnail row remains horizontally scrollable for units with many photos.
+
+## Mobile unit detail middle-section fix
+- Forced the mobile unit detail modal into normal block flow so the details panel cannot overlap the gallery.
+- Moved the thumbnail rail onto the light content background with a divider for clearer separation.
+- Kept thumbnails horizontally scrollable and preserved the sticky Back/Close toolbar.
