@@ -37,3 +37,9 @@ The newer Cloudflare Worker code with the dedicated `development_images` table i
 - Added `Vacant` as a supported unit status alongside Available, Available Soon, and Occupied in Admin and the Cloudflare Worker payload validation. Vacant units are treated as currently available on public unit details and inquiry selection.
 - Replaced public references to `Nathaniel Alexander Torres` with `Chiqui Torres`, including the team card initials.
 - Added `Bulacan` and `Batangas` to the hero location strip for future listings.
+
+
+## Contact-link reliability fix
+- Viber now uses the installed-app deep link `viber://chat/?number=%2B639473068528` instead of `viber.me`, avoiding the Viber Business Account requirement of the web Click-to-Chat URL.
+- The Viber link opens in the current tab/user gesture (no `target=_blank`) so mobile browsers are less likely to block the app handoff.
+- Messenger no longer uses the share-specific `/e2ee/t/` route; it now uses the standard Messenger thread route `https://www.messenger.com/t/1567965688161013/`.
